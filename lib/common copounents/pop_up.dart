@@ -24,7 +24,7 @@ class ShowPopUp extends StatelessWidget {
 
     return AlertDialog(
       backgroundColor: Colors.white,
-      title: title,
+      title: Center(child: title),
       content: content,
       actions: showbutton!
           ? [

@@ -35,7 +35,7 @@ class _DesignFavoritesState extends State<DesignFavorites> {
               final cubit2 = DesignsCubit.get(context);
 
               if (state is DesignsLoading) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: Text(""));
               } else if (state is DesignsFailure) {
                 return Center(child: Text('Error: ${state.errMessage}'));
               } else if (state is DesignsSuccess) {
@@ -61,7 +61,9 @@ class _DesignFavoritesState extends State<DesignFavorites> {
                                 MaterialPageRoute(
                                     builder: (context) => FavoritesDetails(
                                           description:
-                                              "${design["description"]}",
+                                              design["description"] == null
+                                                  ? "${design["description"]}"
+                                                  : "",
                                           image:
                                               "${linkServerName}/${design["image"]}",
                                           name: "${design["name"]}",
@@ -98,7 +100,7 @@ class _DesignFavoritesState extends State<DesignFavorites> {
                                         style: TextStyle(fontSize: 12),
                                       ),
                                       subtitle: Text(
-                                        "${design["price"]} ريال",
+                                        "",
                                         style: TextStyle(fontSize: 12),
                                       ),
                                       trailing: ElevatedButton(

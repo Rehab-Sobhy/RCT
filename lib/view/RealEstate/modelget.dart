@@ -1,24 +1,24 @@
 import 'package:flutter/foundation.dart';
 
 class Modelget extends ChangeNotifier {
-  final String? house_type;
-  final String? type;
-  final String? house_space;
+  dynamic? house_type;
+  dynamic? type;
+  dynamic? house_space;
   String? description;
   String? name;
-  final String? district_name;
+  dynamic? district_name;
   final dynamic price;
-  final String? image1;
+  dynamic image1;
   String? number;
-  final String? city_name;
-  final String? image2;
+  dynamic? city_name;
+  dynamic image2;
   dynamic image;
-  final String? image3;
-  final String? image4;
-  final String? identity;
-  final String? id;
-  final String? status;
-  final String? created_at;
+  dynamic image3;
+  dynamic image4;
+  dynamic identity;
+  dynamic? id;
+  dynamic? status;
+  dynamic? created_at;
   dynamic orderNumber;
 
   Modelget({

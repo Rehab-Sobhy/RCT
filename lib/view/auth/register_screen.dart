@@ -12,7 +12,7 @@ import 'package:rct/common%20copounents/custom_textformfield_password.dart';
 import 'package:rct/common%20copounents/main_button.dart';
 import 'package:rct/constants/constants.dart';
 import 'package:rct/model/auth/register_model.dart';
-import 'package:rct/sendotp.dart';
+import 'package:rct/view/auth/sendotp.dart';
 import 'package:rct/view-model/cubits/register/register_cubit.dart';
 import 'package:rct/view-model/functions/image_picker.dart';
 import 'package:rct/view-model/functions/snackbar.dart';
@@ -52,12 +52,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
           isLoading = true;
         } else if (state is RegisterSuccess) {
           Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (contet) => SendOtp()),
-              (route) => false);
+            context,
+            MaterialPageRoute(builder: (context) => SendOtp()),
+            (route) => false,
+          );
         } else if (state is RegisterFailed) {
           isLoading = false;
-          showSnackBar(context, local.loginError, redColor);
+          // Assuming your backend returns the error message in `state.errMessage`
+          if (state.errMessage.contains('phone')) {
+            showSnackBar(
+                context, ' رقم الهاتف غير صحيح او مستخدم مسبقا', redColor);
+          } else {
+            // Generic error message
+            showSnackBar(context, 'حدث خطأ أثناء التسجيل: ${state.errMessage}',
+                redColor);
+          }
         }
       },
       builder: (context, state) => ModalProgressHUD(
@@ -118,6 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         horizontal: constHorizontalPadding,
                       ),
                       child: TextFormFieldCustom(
+                        Text: "966+",
                         context: context,
                         controller: phonecontroller,
                         labelText: "الهاتف",
@@ -219,6 +229,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             if (image == null) {
                               showSnackBar(context, 'الرجاء اختيار صورة الهوية',
                                   redColor);
+                              return;
+                            }
+                            if (phonecontroller.text.isEmpty) {
+                              showSnackBar(
+                                  context, 'الرجاء إدخال رقم الهاتف', redColor);
+                              return;
+                            } else if (!RegExp(r'^[0-9]{9}$')
+                                .hasMatch(phonecontroller.text)) {
+                              showSnackBar(context,
+                                  'الرجاء إدخال رقم هاتف صحيح', redColor);
                               return;
                             }
 

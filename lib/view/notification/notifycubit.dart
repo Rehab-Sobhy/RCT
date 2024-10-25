@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rct/shared_pref.dart';
 import 'package:rct/view-model/services/crud.dart';
-import 'package:rct/view/RealEstate/notification/notify_model.dart';
-import 'package:rct/view/RealEstate/notification/states.dart';
+import 'package:rct/view/notification/notify_model.dart';
+import 'package:rct/view/notification/states.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
   NotificationCubit() : super(NotificationInitial());
@@ -30,6 +30,7 @@ class NotificationCubit extends Cubit<NotificationState> {
   Future<void> fetchData(String url) async {
     emit(NotificationLoading());
     final token = await _getAuthToken();
+
     try {
       final response = await _dio.get(
         url,
@@ -40,33 +41,35 @@ class NotificationCubit extends Cubit<NotificationState> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        if (response.headers['content-type'] != null &&
-            response.headers['content-type']!.contains('text/html')) {
-          emit(NotificationError(
-              'Response data is not in the expected JSON format.'));
+      if (response.statusCode != 200) {
+        emit(NotificationError(
+            'Failed to load data. Status code: ${response.statusCode}'));
+        return;
+      }
+
+      final contentType = response.headers['content-type'];
+      if (contentType != null && contentType.contains('text/html')) {
+        emit(NotificationError(
+            'Response data is not in the expected JSON format.'));
+        return;
+      }
+
+      if (response.data is Map && response.data.containsKey('notifications')) {
+        var notifications = response.data['notifications'] as List?;
+        if (notifications == null || notifications.isEmpty) {
+          emit(NotificationError('No notifications available'));
           return;
         }
 
-        if (response.data is Map) {
-          var notifications = response.data['notifications'];
-          if (notifications == null || notifications.isEmpty) {
-            emit(NotificationError('No notifications available'));
-            return;
-          }
+        allDataList = notifications
+            .map<NotificationModel>(
+                (element) => NotificationModel.fromJson(element))
+            .toList();
 
-          allDataList = notifications
-              .map<NotificationModel>(
-                  (element) => NotificationModel.fromJson(element))
-              .toList();
-          emit(NotificationLoaded(allDataList));
-        } else {
-          emit(NotificationError(
-              'Response data is not in the expected JSON format.'));
-        }
+        emit(NotificationLoaded(allDataList));
       } else {
         emit(NotificationError(
-            'Failed to load data. Status code: ${response.statusCode}'));
+            'Response data is not in the expected JSON format.'));
       }
     } on DioError catch (e) {
       emit(NotificationError(
@@ -109,10 +112,9 @@ class NotificationCubit extends Cubit<NotificationState> {
       if (response is Map<String, dynamic>) {
         if (response.containsKey("data")) {
           final data = response["data"];
-          print('Data: $data');
+
           emit(NotificationLoaded(postNotification));
         } else {
-          print('Response keys: ${response.keys}');
           emit(NotificationError(
               "Unexpected response format. Response keys: ${response.keys}"));
         }
@@ -121,7 +123,6 @@ class NotificationCubit extends Cubit<NotificationState> {
             "Unexpected response type. Response: ${response.toString()}"));
       }
     } catch (e) {
-      print('Error in postNotify: $e');
       emit(NotificationError("$e"));
     }
   }

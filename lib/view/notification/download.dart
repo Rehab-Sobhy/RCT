@@ -1,23 +1,19 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import 'package:rct/common%20copounents/app_bar_back_button.dart';
 import 'package:rct/common%20copounents/pop_up.dart';
 import 'package:rct/constants/constants.dart';
 import 'package:rct/view-model/functions/image_picker.dart';
 import 'package:rct/view-model/functions/snackbar.dart';
-import 'package:rct/view/RealEstate/notification/notifications_screen.dart';
-import 'package:rct/view/RealEstate/notification/notify_model.dart';
-import 'package:rct/view/RealEstate/notification/notifycubit.dart';
-import 'package:rct/view/RealEstate/notification/states.dart';
+import 'package:rct/view/notification/notify_model.dart';
+import 'package:rct/view/notification/notifycubit.dart';
+import 'package:rct/view/notification/states.dart';
 import 'package:rct/view/home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -32,12 +28,14 @@ class DownloadScreen extends StatefulWidget {
 
 class _DownloadScreenState extends State<DownloadScreen> {
   File? identity;
+  bool isLocked = false;
   bool isLoading = false;
   bool _isDownloading = false;
   String _downloadProgress = "0%";
   bool _isChecked = false; // Checkbox state
 
   // Function to download file
+
   Future<void> _downloadFile(String url, String fileName) async {
     setState(() {
       _isDownloading = true;
@@ -51,25 +49,22 @@ class _DownloadScreenState extends State<DownloadScreen> {
         }
       }
 
-      // Define the save path variable
+      // تحديد المسار إلى مجلد التنزيلات على Android
       String savePath;
 
-      // Set path based on platform
       if (Platform.isAndroid) {
-        // Android: Use the external storage Downloads folder
-        Directory directory =
-            Directory('/storage/emulated/0/Download'); // Downloads folder
-        savePath = "${directory.path}/$fileName";
+        // الحصول على مسار مجلد التنزيلات
+        Directory? downloadsDir = Directory('/storage/emulated/0/Download');
+        savePath = "${downloadsDir.path}/$fileName";
       } else if (Platform.isIOS) {
-        // iOS: Use the application documents directory
-        Directory directory = await getApplicationDocumentsDirectory();
-        savePath = "${directory.path}/$fileName";
+        Directory docsDir = await getApplicationDocumentsDirectory();
+        savePath = "${docsDir.path}/$fileName";
       } else {
         throw Exception('Unsupported platform');
       }
 
       print("Saving file to: $savePath");
-      print(savePath);
+
       Dio dio = Dio();
 
       await dio.download(
@@ -91,7 +86,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("🥳 تم التحميل بنجاح  at$savePath"),
+          content: Text("File saved successfully at $savePath"),
           backgroundColor: Colors.green,
         ),
       );
@@ -111,21 +106,21 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
   String? fileName;
 
-  Future<void> _downloadFileee(String fullUrl) async {
-    // Generate a unique filename using the current timestamp
-    String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-    fileName = "RCT_$timestamp.pdf";
+  // Future<void> _downloadFileee(String fullUrl) async {
+  //   // Generate a unique filename using  the current timestamp
+  //   String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+  //   fileName = "RCT_$timestamp.pdf";
 
-    // Your download logic here
-    // For example:
-    final response = await Dio().download(fullUrl, '/path/to/save/$fileName');
+  //   // Your download logic here
+  //   // For example:
+  //   final response = await Dio().download(fullUrl, '/path/to/save/$fileName');
 
-    if (response.statusCode == 200) {
-      print('File downloaded: $fileName');
-    } else {
-      print('Download failed: ${response.statusCode}');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     print('File downloaded: $fileName');
+  //   } else {
+  //     print('Download failed: ${response.statusCode}');
+  //   }
+  // }
 
   bool lol = false;
 
@@ -200,11 +195,102 @@ class _DownloadScreenState extends State<DownloadScreen> {
                     ),
                     const SizedBox(height: 30),
                     SizedBox(height: constVerticalPadding),
+                    // InkWell(
+                    //   child: identity != null
+                    //       ? Image.file(
+                    //           identity!,
+                    //           height: 50,
+                    //           width: 50, // Set a proper height for the image
+                    //           fit: BoxFit.cover, // Adjust the image fit
+                    //         )
+                    //       : Image.asset(
+                    //           "$imagePath/upload-photo.png", // Default image when no image is selected
+                    //           height: 150, // Set a height for consistency
+                    //         ),
+                    //   onTap: () => pickImageFromGallery(context)
+                    //       .then((value) => setState(() {
+                    //             if (value != null) {
+                    //               identity = value; // Assign the picked image
+                    //             }
+                    //           })),
+                    // ),
+
                     InkWell(
-                      child: Image.asset("$imagePath/upload-photo.png"),
-                      onTap: () => pickImageFromGallery(context).then(
-                          (value) => value != null ? identity = value : null),
+                      onTap: () => pickImageFromGallery(context).then((value) {
+                        if (value != null) {
+                          setState(() {
+                            identity = value;
+                          });
+                        }
+                      }),
+                      child: isLocked
+                          ? Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    // Show the image in a dialog when clicked
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Image.file(
+                                                identity!,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text('Close'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Image.file(
+                                    identity!,
+                                    height: 50,
+                                    width: 50,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                Spacer(),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    // Unlock the image and show the text field again
+                                    setState(() {
+                                      isLocked = false;
+                                      identity = null;
+                                    });
+                                  },
+                                ),
+                              ],
+                            )
+                          : InkWell(
+                              onTap: () =>
+                                  pickImageFromGallery(context).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    identity = value;
+
+                                    isLocked =
+                                        true; // Lock the image when selected
+                                  });
+                                }
+                              }),
+                              child: Image.asset("$imagePath/upload-photo.png"),
+                            ),
                     ),
+
                     SizedBox(height: constVerticalPadding),
                     CheckboxListTile(
                       title: const Text(
@@ -237,7 +323,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
                                     type: product.notification.type,
                                     data_id: product.notification.data.id,
                                   );
-
+                              print(
+                                  "data_id ${product.notification.data.id}  type: ${product.notification.type} file $identity");
                               lol = true;
 
                               // print(
@@ -288,6 +375,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
                                     type: product.notification.type,
                                     data_id: product.notification.data.id,
                                   );
+                              print(
+                                  "data_id ${product.notification.data.id}  type: ${product.notification.type} file $identity");
 
                               lol = true;
                             } else {

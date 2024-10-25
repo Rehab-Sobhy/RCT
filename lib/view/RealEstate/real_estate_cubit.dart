@@ -1,11 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert'; // Ensure this import is present
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rct/view/RealEstate/modelget.dart';
 import 'package:rct/view/RealEstate/states.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// State Classes
+class SearchSuccess extends DataState {
+  final List<Modelget> searchResults;
+
+  SearchSuccess(this.searchResults);
+}
+
+class FilterLoadingsState extends DataState {}
+
+// DataCubit Class
 class DataCubit extends Cubit<DataState> {
   DataCubit() : super(DataInitial()) {
     _loadAllDataFromSharedPreferences();
@@ -20,7 +30,6 @@ class DataCubit extends Cubit<DataState> {
     receiveTimeout: const Duration(seconds: 60),
   ));
 
-  Dio get dio => _dio;
   List<Modelget> allDataList = [];
   List<Modelget>? filterList;
   List<Modelget>? searchList;
@@ -31,80 +40,76 @@ class DataCubit extends Cubit<DataState> {
     emit(DataLoading());
     try {
       final response = await _dio.get(url);
-      print('Response status: ${response.statusCode}');
-      print('Full response: ${response.data}');
-
       if (response.statusCode == 200) {
         var houses = response.data['houses'];
-        print(houses[0]);
-        print(houses[0]['image1']);
-
         if (houses == null || houses.isEmpty) {
-          print('Houses data is null or empty');
           emit(DataError('No houses available'));
           return;
         }
 
-        allDataList = [];
-        houses.forEach((element) {
-          allDataList.add(Modelget.fromJson(element));
-        });
+        allDataList = houses.map<Modelget>((element) {
+          return Modelget.fromJson(element);
+        }).toList();
 
-        // Save data to SharedPreferences after fetching
-
-        emit(DataSuccess(allDataList));
+        emit(DataSuccess(allDataList)); // Emit success with the data
       } else {
-        print('Failed to load data. Status code: ${response.statusCode}');
         emit(DataError(
             'Failed to load data. Status code: ${response.statusCode}'));
       }
-    } on DioError catch (e) {
-      if (e.response != null) {
-        print(
-            'Dio error! STATUS: ${e.response?.statusCode}, DATA: ${e.response?.data}, HEADERS: ${e.response?.headers}');
-        emit(DataError(
-            'Dio error! STATUS: ${e.response?.statusCode}, DATA: ${e.response?.data}, HEADERS: ${e.response?.headers}'));
-      } else {
-        print('Error sending request: ${e.message}');
-        emit(DataError('Error sending request: ${e.message}'));
-      }
     } catch (e) {
-      print('Error: $e');
       emit(DataError('Error: $e'));
     }
-    print(allDataList.length);
   }
 
   Future<void> FilteredData({
     required String city,
     required String district,
   }) async {
-    emit(FilterloadingssState());
+    emit(FilterLoadingsState());
+    city = city.trim();
+    district = district.trim();
 
     filterList = allDataList.where((element) {
-      bool cityyy = element.city_name != null &&
-          element.city_name!.toLowerCase().contains(city.toLowerCase());
-      bool districttt = element.district_name != null &&
-          element.district_name!.toLowerCase().contains(district.toLowerCase());
+      bool cityMatches = true;
+      bool districtMatches = true;
 
-      return cityyy && districttt;
+      if (city.isNotEmpty) {
+        cityMatches = element.city_name != null &&
+            element.city_name!.toLowerCase().contains(city.toLowerCase());
+      }
+
+      if (district.isNotEmpty) {
+        districtMatches = element.district_name != null &&
+            element.district_name!
+                .toLowerCase()
+                .contains(district.toLowerCase());
+      }
+
+      return cityMatches && districtMatches;
     }).toList();
 
-    emit(FilterSuccessState(filterList!));
-    print("filter list");
+    if (filterList!.isEmpty) {
+      emit(DataError("No data matches the filter criteria."));
+    } else {
+      emit(FilterSuccessState(filterList!));
+    }
   }
 
   void SearchHouse({required String input}) {
     searchList = allDataList.where((element) {
-      bool cityyy = element.city_name != null &&
+      bool cityMatches = element.city_name != null &&
           element.city_name!.toLowerCase().contains(input.toLowerCase());
-      bool districttt = element.district_name != null &&
+      bool districtMatches = element.district_name != null &&
           element.district_name!.toLowerCase().contains(input.toLowerCase());
 
-      return cityyy || districttt;
+      return cityMatches || districtMatches;
     }).toList();
-    emit(SearchSuccss());
-    print("search list ");
+
+    if (searchList!.isNotEmpty) {
+      emit(SearchSuccess(searchList!));
+    } else {
+      emit(DataError('No results found for your search.'));
+    }
   }
 
   Future<void> filterByCategory(String category) async {
@@ -114,7 +119,11 @@ class DataCubit extends Cubit<DataState> {
         return item.house_type?.toLowerCase() == category.toLowerCase();
       }).toList();
 
-      emit(FilterCategorySuccessState(filterbycategoryList!));
+      if (filterbycategoryList!.isEmpty) {
+        emit(DataError("No houses available in this category."));
+      } else {
+        emit(FilterSuccessState(filterbycategoryList!));
+      }
     } catch (error) {
       emit(DataError(error.toString()));
     }
@@ -122,7 +131,6 @@ class DataCubit extends Cubit<DataState> {
 
   Future<void> fetchNotifications() async {
     final url = Uri.parse('https://rctapp.com/api/testnotification');
-
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -142,11 +150,8 @@ class DataCubit extends Cubit<DataState> {
           .map((item) => Modelget.fromJson(json.decode(item)))
           .toList();
     }
-
-    emit(FavouriteSuccess(favoriteList));
   }
 
-  // Toggle favorite status
   Future<void> toggleFavorite(Modelget house) async {
     if (favoriteList.any((favoriteHouse) => favoriteHouse.id == house.id)) {
       favoriteList.removeWhere((favoriteHouse) => favoriteHouse.id == house.id);
@@ -155,7 +160,6 @@ class DataCubit extends Cubit<DataState> {
     }
 
     await _saveFavoritesToSharedPreferences();
-    emit(FavouriteSuccess(favoriteList));
   }
 
   Future<void> _loadAllDataFromSharedPreferences() async {
@@ -171,7 +175,6 @@ class DataCubit extends Cubit<DataState> {
     }
   }
 
-  // Save favorite list to SharedPreferences
   Future<void> _saveFavoritesToSharedPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     List<String> favoriteItems =

@@ -36,7 +36,7 @@ class _SketchesFavouriteState extends State<SketchesFavourite> {
               final cubit = SketchesCubit.get(context);
 
               if (state is SketchesLoading) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: Container());
               } else if (state is SketchesFailure) {
                 return Center(child: Text('Error: ${state.errMessage}'));
               } else if (state is SketchesSuccess) {
@@ -61,7 +61,9 @@ class _SketchesFavouriteState extends State<SketchesFavourite> {
                                 MaterialPageRoute(
                                     builder: (context) => FavoritesDetails(
                                           description:
-                                              "${sketch["description"]}",
+                                              sketch["description"] == null
+                                                  ? "${sketch["description"]}"
+                                                  : "",
                                           image:
                                               "${linkServerName}/${sketch["image"]}",
                                           name: "${sketch["name"]}",
@@ -80,7 +82,8 @@ class _SketchesFavouriteState extends State<SketchesFavourite> {
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
                                           image: NetworkImage(
-                                            "${linkServerName}/${sketch["image"]}",
+                                            "${linkServerName}/${sketch["image"]}" ??
+                                                'https://via.placeholder.com/150',
                                           ),
                                           fit: BoxFit.fill,
                                         ),
@@ -98,7 +101,7 @@ class _SketchesFavouriteState extends State<SketchesFavourite> {
                                         style: TextStyle(fontSize: 12),
                                       ),
                                       subtitle: Text(
-                                        "${sketch["price"]} ريال",
+                                        "",
                                         style: TextStyle(fontSize: 12),
                                       ),
                                       trailing: ElevatedButton(

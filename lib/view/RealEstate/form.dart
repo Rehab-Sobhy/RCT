@@ -34,54 +34,33 @@ class AddEstate extends StatefulWidget {
   State<AddEstate> createState() => _FormScreenState();
 }
 
-final List<String> _cities = [
+List<String> _cities = [
   'الرياض',
-  'جده',
-  'المدينه المنوره',
-  'تبوك',
+  'جدة',
+  'مكة المكرمة',
+  'المدينة المنورة',
   'الدمام',
-  'الاحساء',
-  'القطيف',
-  'خميس مشيط',
-  'المظيلف',
-  'الهفوف',
-  'المبرز',
-  'الطائف',
-  'نجران',
-  'حفر الباطن',
-  'الجبيل',
-  'ضباء',
-  'الخرج',
-  'الثقبة',
-  'ينبع البحر',
   'الخبر',
-  'عرعر',
-  'الحوية',
-  'عنيزه',
-  'سكاكا',
-  'جيزان',
-  'القريات',
+  'الأحساء',
   'الظهران',
-  'الباحة',
-  'الزلفي',
-  'الرس',
-  'وادى الدواسر',
-  'بيشه',
-  'سيهات',
-  'شروره',
-  'بحره',
-  'تاروت',
-  'الدوادمى',
-  'صبياء',
-  'بيش',
-  'احد رفيدة',
-  'الفريش',
-  'بارق',
-  'الحوطه',
-  'الافلاج'
+  'القصيم',
+  'أبها',
+  'حائل',
+  'تبوك',
+  'الجوف',
+  'القريات',
+  'خميس مشيط',
+  'جازان',
+  'نجران',
+  'ينبع',
+  'الهفوف',
+  'القطيف',
+  'بريدة',
+  'عنيزة',
 ];
 
 class _FormScreenState extends State<AddEstate> {
+  String? selectedType;
   bool isLoading = false;
   File? identity;
   // ignore: non_constant_identifier_names
@@ -91,12 +70,12 @@ class _FormScreenState extends State<AddEstate> {
   File? image3;
   File? image4;
   String? selectedCity;
-  TextEditingController houseTypeController = TextEditingController();
+  // TextEditingController houseTypeController = TextEditingController();
   bool isLocationConfirmed = false;
   TextEditingController houseNameController = TextEditingController();
   TextEditingController houseSpaceController = TextEditingController();
   TextEditingController distrectnameController = TextEditingController();
-
+  TextEditingController phoneController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController locationController = TextEditingController();
@@ -110,6 +89,8 @@ class _FormScreenState extends State<AddEstate> {
       },
     );
   }
+
+  final List<String> types = ["سكني", "تجاري"];
 
   @override
   Widget build(BuildContext context) {
@@ -161,683 +142,706 @@ class _FormScreenState extends State<AddEstate> {
           }
         },
         builder: (context, state) {
-          return ModalProgressHUD(
-            inAsyncCall: isLoading,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        local.nationalIdOrCommercialRegister,
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      InkWell(
-                        child: identity != null
-                            ? GestureDetector(
-                                onTap: () => showImage(context, identity!),
-                                child: Image.file(
-                                  identity!,
-                                  height: 60,
-                                  width: 60,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : Image.asset("$imagePath/upload-photo.png"),
-                        onTap: () =>
-                            pickImageFromGallery(context).then((value) {
-                          if (value != null) {
-                            setState(() {
-                              houseModel.identity = value;
-                              identity = value; // updating UI
-                            });
-                          }
-                        }),
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      Text(
-                        local.electronicDeed,
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      InkWell(
-                        child: electronic_insurance != null
-                            ? GestureDetector(
-                                onTap: () =>
-                                    showImage(context, electronic_insurance!),
-                                child: Image.file(
-                                  identity!,
-                                  height: 60,
-                                  width: 60,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : Image.asset("$imagePath/upload-photo.png"),
-                        onTap: () =>
-                            pickImageFromGallery(context).then((value) {
-                          if (value != null) {
-                            setState(() {
-                              houseModel.electronic_instrument = value;
-                              electronic_insurance = value; // updating UI
-                            });
-                          }
-                        }),
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      Custom_textField(
-                        hintText: '',
-                        textt: local.estateName,
-                        controller: houseNameController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'الرجاء إدخال اسم العقار';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.text,
-                      ),
-                      Custom_textField(
-                        hintText: '',
-                        textt: local.estateType,
-                        controller: houseTypeController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'الرجاء إدخال نوع العقار';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.text,
-                      ),
-                      Custom_textField(
-                        hintText: '',
-                        textt: local.space,
-                        controller: houseSpaceController,
-                        keyboardType:
-                            TextInputType.number, // If space is numeric
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'الرجاء إدخال مساحة العقار';
-                          } else if (int.tryParse(value) == null) {
-                            return 'الرجاء إدخال مساحة صالحة';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        local.city,
-                      ),
-                      const SizedBox(height: 8),
-                      DropdownButtonFormField<String>(
-                        dropdownColor: Colors.white,
-                        value: selectedCity,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 0),
-                          ),
-                          fillColor: grey.withOpacity(0.5),
-                          filled: true,
-                          labelStyle:
-                              Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    color: darkGrey,
-                                    overflow: TextOverflow.clip,
-                                  ),
-                          hintText: "",
-                        ),
-                        items: _cities.map((String city) {
-                          return DropdownMenuItem<String>(
-                            value: city,
-                            child: Text(
-                              city,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      local.nationalIdOrCommercialRegister,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    InkWell(
+                      child: identity != null
+                          ? GestureDetector(
+                              onTap: () => showImage(context, identity!),
+                              child: Image.file(
+                                identity!,
+                                height: 60,
+                                width: 60,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Image.asset("$imagePath/upload-photo.png"),
+                      onTap: () => pickImageFromGallery(context).then((value) {
+                        if (value != null) {
                           setState(() {
-                            selectedCity = newValue;
+                            houseModel.identity = value;
+                            identity = value; // updating UI
                           });
-                        },
-                      ),
-                      Custom_textField(
-                        hintText: local.enterDistrict,
-                        textt: local.district,
-                        controller: distrectnameController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'الرجاء إدخال اسم الحي';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.text,
-                      ),
-                      Custom_textField(
-                        hintText: '',
-                        textt: local.price,
-                        controller: priceController,
-                        keyboardType:
-                            TextInputType.number, // If price is numeric
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'الرجاء إدخال السعر';
-                          } else if (int.tryParse(value) == null) {
-                            return 'الرجاء إدخال قيمة صالحة للسعر';
-                          }
-                          return null;
-                        },
-                      ),
-                      Custom_textField(
-                        hintText: local.estateSummary,
-                        textt: local.estateSummary,
-                        controller: descriptionController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'الرجاء إدخال وصف العقار';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.text,
-                      ),
-                      Text(
-                        local.propertyLocation,
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      InkWell(
-                        child: Image.asset("$imagePath/Frame 177.png"),
-                        onTap: () async {
-                          await LocationPermission()
-                              .requestLocationPermission()
-                              .then((value) =>
-                                  LocationPermission().getCurrentLocation());
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      PinLocationScreen(
-                                onPlacePicked: (p0) {
-                                  // Ensure valid location data is being returned
-                                  if (p0 != null && p0.geometry != null) {
-                                    houseModel.lat =
-                                        p0.geometry!.location.lat.toString();
-                                    houseModel.long =
-                                        p0.geometry!.location.lng.toString();
-                                    houseModel.location = p0.name ?? '';
-                                    setState(() {
-                                      locationController.text =
-                                          houseModel.location ?? '';
-                                    });
-
-                                    // Confirm that data is passed back correctly
-                                    if (kDebugMode) {
-                                      print(
-                                          "Location selected: ${houseModel.location}");
-                                      print("Latitude: ${houseModel.lat}");
-                                      print("Longitude: ${houseModel.long}");
-                                    }
-                                  } else {
-                                    print(
-                                        "Error: Location or geometry is null");
-                                  }
-
-                                  // Close the map screen
-                                  Navigator.pop(context);
-                                },
+                        }
+                      }),
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Text(
+                      local.electronicDeed,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    InkWell(
+                      child: electronic_insurance != null
+                          ? GestureDetector(
+                              onTap: () =>
+                                  showImage(context, electronic_insurance!),
+                              child: Image.file(
+                                identity!,
+                                height: 60,
+                                width: 60,
+                                fit: BoxFit.cover,
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      TextFormFieldCustom(
-                        context: context,
-                        labelText: local.enterSiteLink,
-                        onChanged: (value) {
-                          houseModel.location = value;
-                        },
-                        controller: locationController,
-                        // number: true,
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      Text(local.mainPhoto,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 12)),
-                      SizedBox(height: constVerticalPadding),
-                      InkWell(
-                        onTap: () =>
-                            pickImageFromGallery(context).then((value) {
-                          if (value != null) {
-                            setState(() {
-                              houseModel.image1 = value;
-                              image1 = value;
-                            });
-                          }
-                        }),
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: image1 == null
-                              ? const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.photo,
-                                          size: 25,
-                                          color: Color.fromARGB(
-                                              255, 77, 110, 168)),
-                                    ],
-                                  ),
-                                )
-                              : GestureDetector(
-                                  onTap: () => showImage(context, image1!),
-                                  child: Image.file(
-                                    image1!,
-                                    fit: BoxFit.cover,
-                                    width: 60,
-                                    height: 50,
-                                  ),
+                            )
+                          : Image.asset("$imagePath/upload-photo.png"),
+                      onTap: () => pickImageFromGallery(context).then((value) {
+                        if (value != null) {
+                          setState(() {
+                            houseModel.electronic_instrument = value;
+                            electronic_insurance = value; // updating UI
+                          });
+                        }
+                      }),
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Custom_textField(
+                      hintText: '',
+                      textt: local.estateName,
+                      controller: houseNameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء إدخال اسم العقار';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.text,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      local.estateType,
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      dropdownColor: Colors.white,
+                      value: selectedType,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: const BorderSide(
+                              color: Colors.transparent, width: 0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: const BorderSide(
+                              color: Colors.transparent, width: 0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: const BorderSide(
+                              color: Colors.transparent, width: 0),
+                        ),
+                        fillColor: grey.withOpacity(0.5),
+                        filled: true,
+                        labelStyle:
+                            Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  color: darkGrey,
+                                  overflow: TextOverflow.clip,
                                 ),
+                        hintText: "",
+                      ),
+                      items: types.map((String type) {
+                        return DropdownMenuItem<String>(
+                          value: type,
+                          child: Text(
+                            type,
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedType = newValue;
+                        });
+                      },
+                    ),
+                    Custom_textField(
+                      hintText: '',
+                      textt: local.space,
+                      controller: houseSpaceController,
+                      keyboardType: TextInputType.number, // If space is numeric
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء إدخال مساحة العقار';
+                        } else if (int.tryParse(value) == null) {
+                          return 'الرجاء إدخال مساحة صالحة';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      local.city,
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      dropdownColor: Colors.white,
+                      value: selectedCity,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: const BorderSide(
+                              color: Colors.transparent, width: 0),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: const BorderSide(
+                              color: Colors.transparent, width: 0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: const BorderSide(
+                              color: Colors.transparent, width: 0),
+                        ),
+                        fillColor: grey.withOpacity(0.5),
+                        filled: true,
+                        labelStyle:
+                            Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  color: darkGrey,
+                                  overflow: TextOverflow.clip,
+                                ),
+                        hintText: "",
                       ),
-                      SizedBox(height: constVerticalPadding),
-                      Text(local.sectionPhotos,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 12)),
-                      SizedBox(height: constVerticalPadding),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          InkWell(
-                            onTap: () =>
-                                pickImageFromGallery(context).then((value) {
-                              if (value != null) {
-                                setState(() {
-                                  houseModel.image2 = value;
-                                  image2 = value;
-                                });
-                              }
-                            }),
-                            child: Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: image2 == null
-                                  ? const Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.photo,
-                                              size: 25,
-                                              color: Color.fromARGB(
-                                                  255, 77, 110, 168)),
-                                        ],
-                                      ),
-                                    )
-                                  : GestureDetector(
-                                      onTap: () => showImage(context, image2!),
-                                      child: Image.file(
-                                        image2!,
-                                        fit: BoxFit.cover,
-                                        width: 40,
-                                        height: 40,
-                                      ),
-                                    ),
+                      items: _cities.map((String city) {
+                        return DropdownMenuItem<String>(
+                          value: city,
+                          child: Text(
+                            city,
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedCity = newValue;
+                        });
+                      },
+                    ),
+                    Custom_textField(
+                      hintText: local.enterDistrict,
+                      textt: local.district,
+                      controller: distrectnameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء إدخال اسم الحي';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.text,
+                    ),
+                    Custom_textField(
+                      hintText: '',
+                      textt: local.price,
+                      controller: priceController,
+                      keyboardType: TextInputType.number, // If price is numeric
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء إدخال السعر';
+                        } else if (int.tryParse(value) == null) {
+                          return 'الرجاء إدخال قيمة صالحة للسعر';
+                        }
+                        return null;
+                      },
+                    ),
+                    Custom_textField(
+                      hintText: "",
+                      textt: local.estateSummary,
+                      controller: descriptionController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء إدخال وصف العقار';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.text,
+                    ),
+                    Custom_textField(
+                      hintText: "",
+                      textt: local.phone,
+                      controller: phoneController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "الرجاء إدخال رقم الهاتف";
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.text,
+                    ),
+                    Text(
+                      local.propertyLocation,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    InkWell(
+                      child: Image.asset("$imagePath/Frame 177.png"),
+                      onTap: () async {
+                        await LocationPermission()
+                            .requestLocationPermission()
+                            .then((value) =>
+                                LocationPermission().getCurrentLocation());
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    PinLocationScreen(
+                              onPlacePicked: (p0) {
+                                // Ensure valid location data is being returned
+                                if (p0 != null && p0.geometry != null) {
+                                  houseModel.lat =
+                                      p0.geometry!.location.lat.toString();
+                                  houseModel.long =
+                                      p0.geometry!.location.lng.toString();
+                                  houseModel.location = p0.name ?? '';
+                                  setState(() {
+                                    locationController.text =
+                                        houseModel.location ?? '';
+                                  });
+
+                                  // Confirm that data is passed back correctly
+                                  if (kDebugMode) {
+                                    print(
+                                        "Location selected: ${houseModel.location}");
+                                    print("Latitude: ${houseModel.lat}");
+                                    print("Longitude: ${houseModel.long}");
+                                  }
+                                } else {
+                                  print("Error: Location or geometry is null");
+                                }
+
+                                // Close the map screen
+                                Navigator.pop(context);
+                              },
                             ),
                           ),
-                          InkWell(
-                            onTap: () =>
-                                pickImageFromGallery(context).then((value) {
-                              if (value != null) {
-                                setState(() {
-                                  houseModel.image3 = value;
-                                  image3 = value;
-                                });
-                              }
-                            }),
-                            child: Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(color: Colors.grey),
+                        );
+                      },
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    TextFormFieldCustom(
+                      context: context,
+                      labelText: local.enterSiteLink,
+                      onChanged: (value) {
+                        houseModel.location = value;
+                      },
+                      controller: locationController,
+                      // number: true,
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Text(local.mainPhoto,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 12)),
+                    SizedBox(height: constVerticalPadding),
+                    InkWell(
+                      onTap: () => pickImageFromGallery(context).then((value) {
+                        if (value != null) {
+                          setState(() {
+                            houseModel.image1 = value;
+                            image1 = value;
+                          });
+                        }
+                      }),
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: image1 == null
+                            ? const Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.photo,
+                                        size: 25,
+                                        color:
+                                            Color.fromARGB(255, 77, 110, 168)),
+                                  ],
+                                ),
+                              )
+                            : GestureDetector(
+                                onTap: () => showImage(context, image1!),
+                                child: Image.file(
+                                  image1!,
+                                  fit: BoxFit.cover,
+                                  width: 60,
+                                  height: 50,
+                                ),
                               ),
-                              child: image3 == null
-                                  ? const Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.photo,
-                                              size: 25,
-                                              color: Color.fromARGB(
-                                                  255, 77, 110, 168)),
-                                        ],
-                                      ),
-                                    )
-                                  : GestureDetector(
-                                      onTap: () => showImage(context, image3!),
-                                      child: Image.file(
-                                        image3!,
-                                        fit: BoxFit.cover,
-                                        width: 40,
-                                        height: 40,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () =>
-                                pickImageFromGallery(context).then((value) {
-                              if (value != null) {
-                                setState(() {
-                                  houseModel.image4 = value;
-                                  image4 = value;
-                                });
-                              }
-                            }),
-                            child: Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: image4 == null
-                                  ? const Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.photo,
-                                              size: 25,
-                                              color: Color.fromARGB(
-                                                  255, 77, 110, 168)),
-                                        ],
-                                      ),
-                                    )
-                                  : GestureDetector(
-                                      onTap: () => showImage(context, image4!),
-                                      child: Image.file(
-                                        image4!,
-                                        fit: BoxFit.cover,
-                                        width: 60,
-                                        height: 50,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ],
                       ),
-                      SizedBox(height: constVerticalPadding),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Checkbox(
-                            activeColor: primaryColor,
-                            value: isLocationConfirmed,
-                            onChanged: (value) {
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Text(local.sectionPhotos,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 12)),
+                    SizedBox(height: constVerticalPadding),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () =>
+                              pickImageFromGallery(context).then((value) {
+                            if (value != null) {
                               setState(() {
-                                isLocationConfirmed = value ?? false;
+                                houseModel.image2 = value;
+                                image2 = value;
                               });
-                            },
-                          ),
-                          Text(
-                            local.confirmlocation,
-                            style: TextStyle(fontSize: 12, color: blackColor),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      Center(
-                        child: MainButton(
-                          text: local.send,
-                          backGroundColor: primaryColor,
-                          onTap: () async {
-                            try {
-                              if (identity == null) {
-                                showSnackBar(context,
-                                    "من فضلك ارفع الهوية الوطنية", redColor);
-                                return;
-                              }
-
-                              if (electronic_insurance == null) {
-                                showSnackBar(context,
-                                    "من فضلك ارفع الصك الإلكتروني", redColor);
-                                return;
-                              }
-
-                              if (houseTypeController.text.isEmpty) {
-                                showSnackBar(
-                                    context, "يرجى إدخال نوع العقار", redColor);
-                                return;
-                              }
-
-                              if (houseNameController.text.isEmpty) {
-                                showSnackBar(
-                                    context, "يرجى إدخال اسم العقار", redColor);
-                                return;
-                              }
-
-                              if (houseSpaceController.text.isEmpty) {
-                                showSnackBar(context, "يرجى إدخال مساحة العقار",
-                                    redColor);
-                                return;
-                              }
-
-                              if (selectedCity == null ||
-                                  selectedCity!.isEmpty) {
-                                showSnackBar(
-                                    context, "يرجى اختيار المدينة", redColor);
-                                return;
-                              }
-
-                              if (distrectnameController.text.isEmpty) {
-                                showSnackBar(
-                                    context, "يرجى إدخال الحي", redColor);
-                                return;
-                              }
-
-                              if (priceController.text.isEmpty) {
-                                showSnackBar(
-                                    context, "يرجى إدخال السعر", redColor);
-                                return;
-                              }
-
-                              if (descriptionController.text.isEmpty) {
-                                showSnackBar(
-                                    context, "يرجى إدخال وصف العقار", redColor);
-                                return;
-                              }
-
-                              if (houseModel.location == null) {
-                                showSnackBar(context, "يرجى تحديد موقع العقار",
-                                    redColor);
-                                return;
-                              }
-
-                              if (houseModel.image1 == null) {
-                                showSnackBar(context, "يرجى رفع الصورة الأولى",
-                                    redColor);
-                                return;
-                              }
-
-                              if (houseModel.image2 == null) {
-                                showSnackBar(context, "يرجى رفع الصورة الثانية",
-                                    redColor);
-                                return;
-                              }
-
-                              if (houseModel.image3 == null) {
-                                showSnackBar(context, "يرجى رفع الصورة الثالثة",
-                                    redColor);
-                                return;
-                              }
-
-                              if (houseModel.image4 == null) {
-                                showSnackBar(context, "يرجى رفع الصورة الرابعة",
-                                    redColor);
-                                return;
-                              }
-
-                              if (!isLocationConfirmed) {
-                                showSnackBar(context,
-                                    "من فضلك قم بتأكيد الموقع", redColor);
-                                return;
-                              }
-                              if (electronic_insurance != null &&
-                                  identity != null &&
-                                  houseTypeController.text.isNotEmpty &&
-                                  houseNameController.text.isNotEmpty &&
-                                  houseSpaceController.text.isNotEmpty &&
-                                  selectedCity!.isNotEmpty &&
-                                  distrectnameController.text.isNotEmpty &&
-                                  priceController.text.isNotEmpty &&
-                                  descriptionController.text.isNotEmpty &&
-                                  houseModel.location != null &&
-                                  houseModel.image1 != null &&
-                                  houseModel.image2 != null &&
-                                  houseModel.image3 != null &&
-                                  houseModel.image4 != null) {
-                                houseModel.house_space =
-                                    int.tryParse(houseSpaceController.text);
-                                houseModel.house_type =
-                                    houseTypeController.text;
-                                houseModel.city_name = selectedCity;
-                                houseModel.description =
-                                    descriptionController.text;
-                                houseModel.district_name =
-                                    distrectnameController.text;
-                                houseModel.price =
-                                    int.tryParse(priceController.text);
-                                houseModel.identity = identity;
-                                houseModel.image1 = image1;
-                                houseModel.image2 = image2;
-                                houseModel.image3 = image3;
-                                houseModel.image4 = image4;
-
-                                await context
-                                    .read<HouseCubit>()
-                                    .pushOrder(context);
-                              }
-                            } on Exception catch (e) {
-                              print('Error: $e');
-                              showSnackBar(context,
-                                  'Error: Failed to log in $e', redColor);
                             }
-                          },
-                        ),
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      Center(
-                        child: MainButton(
-                            text: local.cancelRequest,
-                            backGroundColor: grey,
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    backgroundColor: Colors.white,
-                                    title: Text(
-                                      "هل انت متأكد من إلغاء الطلب؟",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                    content: Row(
+                          }),
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.grey),
+                            ),
+                            child: image2 == null
+                                ? const Center(
+                                    child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            // Navigate to HomeScreen and remove all previous routes
-                                            Navigator.of(context)
-                                                .pushAndRemoveUntil(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomeScreen()),
-                                              (route) => false,
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.white,
-                                            backgroundColor:
-                                                const Color.fromRGBO(
-                                                    52, 168, 83, 1),
-                                            elevation: 5,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 2),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(7),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'نعم',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 10),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            // Simply close the dialog without any action
-                                            Navigator.of(context).pop();
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.white,
-                                            backgroundColor: Colors.red,
-                                            elevation: 2,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 2),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(7),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'لا',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
+                                        Icon(Icons.photo,
+                                            size: 25,
+                                            color: Color.fromARGB(
+                                                255, 77, 110, 168)),
                                       ],
                                     ),
-                                  );
-                                },
-                              );
-                            }),
+                                  )
+                                : GestureDetector(
+                                    onTap: () => showImage(context, image2!),
+                                    child: Image.file(
+                                      image2!,
+                                      fit: BoxFit.cover,
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () =>
+                              pickImageFromGallery(context).then((value) {
+                            if (value != null) {
+                              setState(() {
+                                houseModel.image3 = value;
+                                image3 = value;
+                              });
+                            }
+                          }),
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.grey),
+                            ),
+                            child: image3 == null
+                                ? const Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.photo,
+                                            size: 25,
+                                            color: Color.fromARGB(
+                                                255, 77, 110, 168)),
+                                      ],
+                                    ),
+                                  )
+                                : GestureDetector(
+                                    onTap: () => showImage(context, image3!),
+                                    child: Image.file(
+                                      image3!,
+                                      fit: BoxFit.cover,
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () =>
+                              pickImageFromGallery(context).then((value) {
+                            if (value != null) {
+                              setState(() {
+                                houseModel.image4 = value;
+                                image4 = value;
+                              });
+                            }
+                          }),
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.grey),
+                            ),
+                            child: image4 == null
+                                ? const Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.photo,
+                                            size: 25,
+                                            color: Color.fromARGB(
+                                                255, 77, 110, 168)),
+                                      ],
+                                    ),
+                                  )
+                                : GestureDetector(
+                                    onTap: () => showImage(context, image4!),
+                                    child: Image.file(
+                                      image4!,
+                                      fit: BoxFit.cover,
+                                      width: 60,
+                                      height: 50,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Checkbox(
+                          activeColor: primaryColor,
+                          value: isLocationConfirmed,
+                          onChanged: (value) {
+                            setState(() {
+                              isLocationConfirmed = value ?? false;
+                            });
+                          },
+                        ),
+                        Text(
+                          local.confirmlocation,
+                          style: TextStyle(fontSize: 12, color: blackColor),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Center(
+                      child: MainButton(
+                        text: local.send,
+                        backGroundColor: primaryColor,
+                        onTap: () async {
+                          try {
+                            if (identity == null) {
+                              showSnackBar(context,
+                                  "من فضلك ارفع الهوية الوطنية", redColor);
+                              return;
+                            }
+
+                            if (electronic_insurance == null) {
+                              showSnackBar(context,
+                                  "من فضلك ارفع الصك الإلكتروني", redColor);
+                              return;
+                            }
+
+                            if (selectedType == null || selectedType!.isEmpty) {
+                              showSnackBar(
+                                  context, "يرجى إدخال نوع العقار", redColor);
+                              return;
+                            }
+
+                            if (houseNameController.text.isEmpty) {
+                              showSnackBar(
+                                  context, "يرجى إدخال اسم العقار", redColor);
+                              return;
+                            }
+
+                            if (houseSpaceController.text.isEmpty) {
+                              showSnackBar(
+                                  context, "يرجى إدخال مساحة العقار", redColor);
+                              return;
+                            }
+
+                            if (selectedCity == null || selectedCity!.isEmpty) {
+                              showSnackBar(
+                                  context, "يرجى اختيار المدينة", redColor);
+                              return;
+                            }
+
+                            if (distrectnameController.text.isEmpty) {
+                              showSnackBar(
+                                  context, "يرجى إدخال الحي", redColor);
+                              return;
+                            }
+
+                            if (priceController.text.isEmpty) {
+                              showSnackBar(
+                                  context, "يرجى إدخال السعر", redColor);
+                              return;
+                            }
+
+                            if (descriptionController.text.isEmpty) {
+                              showSnackBar(
+                                  context, "يرجى إدخال وصف العقار", redColor);
+                              return;
+                            }
+
+                            if (houseModel.location == null) {
+                              showSnackBar(
+                                  context, "يرجى تحديد موقع العقار", redColor);
+                              return;
+                            }
+
+                            if (houseModel.image1 == null) {
+                              showSnackBar(
+                                  context, "يرجى رفع الصورة الأولى", redColor);
+                              return;
+                            }
+
+                            if (phoneController.text.isEmpty) {
+                              showSnackBar(
+                                  context, "الرجاء إدخال رقم الهاتف", redColor);
+                              return;
+                            }
+
+                            if (!isLocationConfirmed) {
+                              showSnackBar(context, "من فضلك قم بتأكيد الموقع",
+                                  redColor);
+                              return;
+                            }
+                            if (electronic_insurance != null &&
+                                identity != null &&
+                                selectedType!.isNotEmpty &&
+                                houseNameController.text.isNotEmpty &&
+                                phoneController.text.isNotEmpty &&
+                                houseSpaceController.text.isNotEmpty &&
+                                selectedCity!.isNotEmpty &&
+                                distrectnameController.text.isNotEmpty &&
+                                priceController.text.isNotEmpty &&
+                                descriptionController.text.isNotEmpty &&
+                                houseModel.location != null &&
+                                houseModel.image1 != null) {
+                              houseModel.house_space =
+                                  int.tryParse(houseSpaceController.text);
+                              houseModel.house_type = selectedType;
+                              houseModel.city_name = selectedCity;
+                              houseModel.description =
+                                  descriptionController.text;
+                              houseModel.district_name =
+                                  distrectnameController.text;
+                              houseModel.phone = phoneController.text;
+                              houseModel.house_name = houseNameController.text;
+                              houseModel.price =
+                                  int.tryParse(priceController.text);
+                              houseModel.identity = identity;
+                              houseModel.image1 = image1;
+                              houseModel.image2 = image2 ?? image1;
+                              houseModel.image3 = image3 ?? image1;
+                              houseModel.image4 = image4 ?? image1;
+
+                              await context
+                                  .read<HouseCubit>()
+                                  .pushOrder(context);
+                            }
+                          } on Exception catch (e) {
+                            print('Error: $e');
+                            showSnackBar(context, 'Error: Failed to log in $e',
+                                redColor);
+                          }
+                        },
                       ),
-                      SizedBox(height: constVerticalPadding),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Center(
+                      child: MainButton(
+                          text: local.cancelRequest,
+                          backGroundColor: grey,
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  title: Text(
+                                    "هل انت متأكد من إلغاء الطلب؟",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  content: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          // Navigate to HomeScreen and remove all previous routes
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomeScreen()),
+                                            (route) => false,
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: const Color.fromRGBO(
+                                              52, 168, 83, 1),
+                                          elevation: 5,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 2),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'نعم',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          // Simply close the dialog without any action
+                                          Navigator.of(context).pop();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: Colors.red,
+                                          elevation: 2,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 2),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'لا',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          }),
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                  ],
                 ),
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:rct/constants/linkapi.dart';
 import 'package:rct/view/RealEstate/modelget.dart';
 import 'package:rct/view/RealEstate/real_estate_cubit.dart';
@@ -10,16 +11,16 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable
-class DesignPage extends StatefulWidget {
-  String? productId;
+class DetailsScreen extends StatefulWidget {
+  String? id;
 
-  DesignPage({super.key, required this.productId});
+  DetailsScreen({super.key, required this.id});
 
   @override
-  State<DesignPage> createState() => _DesignPageState();
+  State<DetailsScreen> createState() => _DetailsScreenState();
 }
 
-class _DesignPageState extends State<DesignPage> {
+class _DetailsScreenState extends State<DetailsScreen> {
   int ind = 0;
   String phoneNumber = "+966569988788";
 
@@ -49,53 +50,90 @@ class _DesignPageState extends State<DesignPage> {
             if (state is DataInitial) {
               return const Center(child: Text('Press button to fetch data'));
             } else if (state is DataLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is DataSuccess) {
+              return Center(child: Container());
+            } else if (state is DataSuccess ||
+                state is SearchSuccess ||
+                state is FilterCategorySuccessState ||
+                state is FilterSuccessState ||
+                state is SearchSuccess ||
+                state is FavouriteSuccess) {
               List<Modelget> getdata = DataCubit.get(context).allDataList;
+              if (state is SearchSuccess) {
+                getdata = DataCubit.get(context).searchList!;
+              }
+              if (state is FilterCategorySuccessState) {
+                getdata = DataCubit.get(context).filterbycategoryList!;
+              }
+              if (state is FavouriteSuccess) {
+                getdata = DataCubit.get(context).favoriteList;
+              }
 
               final product = getdata.firstWhere(
-                (element) => element.id == widget.productId,
+                (element) => element.id == widget.id,
                 orElse: () => Modelget(id: ''),
               );
-
+              double price = double.tryParse(product.price.toString()) ?? 0.0;
+              String formattedCost = NumberFormat('#,###').format(price);
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
                     height: MediaQuery.of(context).size.height * .55,
-                    child: PageView(
-                      controller: _pageController,
-                      onPageChanged: (index) {
-                        setState(() {
-                          ind = index;
-                        });
-                      },
+                    child: Stack(
                       children: [
-                        ClipRRect(
-                          // borderRadius: BorderRadius.circular(40),
-                          child: Image.network(
-                            "$linkServerName/${product.image2!}",
-                            fit: BoxFit.fill,
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.height * .40,
-                          ),
+                        PageView(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            setState(() {
+                              ind = index;
+                            });
+                          },
+                          children: [
+                            ClipRRect(
+                              // borderRadius: BorderRadius.circular(40),
+                              child: Image.network(
+                                product.image2 == null
+                                    ? "$linkServerName/${product.image1}"
+                                    : "$linkServerName/${product.image2}",
+                                fit: BoxFit.fill,
+                                width: double.infinity,
+                                height:
+                                    MediaQuery.of(context).size.height * .40,
+                              ),
+                            ),
+                            ClipRRect(
+                              // borderRadius: BorderRadius.circular(40),
+                              child: Image.network(
+                                product.image3 == null
+                                    ? "$linkServerName/${product.image1}"
+                                    : "$linkServerName/${product.image3}",
+                                width: double.infinity,
+                                fit: BoxFit.fill,
+                                height: 400,
+                              ),
+                            ),
+                            ClipRRect(
+                              // borderRadius: BorderRadius.circular(40),
+                              child: Image.network(
+                                product.image4 == null
+                                    ? "$linkServerName/${product.image1}"
+                                    : "$linkServerName/${product.image4}",
+                                fit: BoxFit.fill,
+                                width: double.infinity,
+                                height: 400,
+                              ),
+                            ),
+                          ],
                         ),
-                        ClipRRect(
-                          // borderRadius: BorderRadius.circular(40),
-                          child: Image.network(
-                            "$linkServerName/${product.image3!}",
-                            width: double.infinity,
-                            fit: BoxFit.fill,
-                            height: 400,
-                          ),
-                        ),
-                        ClipRRect(
-                          // borderRadius: BorderRadius.circular(40),
-                          child: Image.network(
-                            "$linkServerName/${product.image4!}",
-                            fit: BoxFit.fill,
-                            width: double.infinity,
-                            height: 400,
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: IconButton(
+                            icon: Icon(Icons.arrow_back_ios_new_sharp,
+                                color: Colors.black),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                           ),
                         ),
                       ],
@@ -178,7 +216,7 @@ class _DesignPageState extends State<DesignPage> {
                     child: Row(
                       children: [
                         Text(
-                          "${product.price} ${local.sar}",
+                          "$formattedCost ${local.sar}",
                           style: const TextStyle(
                             color: Colors.red,
                             fontSize: 13,
@@ -207,12 +245,11 @@ class _DesignPageState extends State<DesignPage> {
                             await launch(whatsappUri.toString());
                           },
                           child: Container(
-                            height: 60,
-                            width: 60,
+                            height: 40,
                             decoration:
                                 const BoxDecoration(shape: BoxShape.circle),
                             child: Image.asset(
-                              "assets/images/Group 469324.png",
+                              "assets/images/watsap.png",
                               fit: BoxFit.fill,
                             ),
                           ),

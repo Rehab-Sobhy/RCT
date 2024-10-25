@@ -46,10 +46,10 @@ class _DesignAndScreenState extends State<DesignAndScreen> {
     return BlocConsumer<OrderNumberCubit, OrderNumberState>(
       listener: (context, state) {
         if (state is OrderNumberFailure) {
-          showSnackBar(context, state.errMessage, redColor);
+          // showSnackBar(context, state.errMessage, redColor);
         } else if (state is OrderNumberSuccess) {
           if (state.orderNumber.isEmpty) {
-            showSnackBar(context, local.noRequests, redColor);
+            // showSnackBar(context, local.noRequests, redColor);
           } else {
             data = state.orderNumber;
             items = data.map((map) => map["number"] as String).toList();

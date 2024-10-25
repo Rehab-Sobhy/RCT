@@ -17,8 +17,8 @@ class OrderModel extends ChangeNotifier {
   dynamic status = "pending";
   dynamic agreement = "yes";
   dynamic landCheckImage;
-  late File? electronicimage;
-  late File? nationalidimage;
+  dynamic electronicimage;
+  dynamic nationalidimage;
   late dynamic number;
   dynamic user_id = 0;
   dynamic areaspace_id = 0;
@@ -32,12 +32,14 @@ class OrderModel extends ChangeNotifier {
   dynamic build_price = 0;
   dynamic SwimmingPool = 0;
   dynamic has_pool;
+  dynamic islandChecked;
   dynamic image;
   dynamic buildtype_id;
   dynamic orderNumber;
   List floorDetails = [];
   List<String> orderNumbers = [];
-
+  dynamic birthDate;
+  dynamic nationalIdNumber;
   OrderModel() {
     number = generateRandomNumber().toString();
   }

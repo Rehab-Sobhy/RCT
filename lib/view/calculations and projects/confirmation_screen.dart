@@ -32,6 +32,12 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   TextEditingController controller = TextEditingController();
   bool isLoading = false;
   dynamic nationalIdImage;
+  TextEditingController birtController = TextEditingController();
+  TextEditingController nationalIdControlller = TextEditingController();
+  bool isLocked = false;
+  bool isLocked2 = false;
+  bool isNationalIdSelected = false;
+  bool isCommercialRecordSelected = false;
   dynamic electronicImage;
   dynamic landCheckImage; // Optional
   bool isLocationConfirmed = false;
@@ -105,32 +111,215 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    local.nationalIdOrCommercialRegister,
-                    style: TextStyle(fontSize: 12, color: blackColor),
-                  ),
-                  SizedBox(height: constVerticalPadding),
-                  InkWell(
-                    onTap: () => pickImageFromGallery(context).then((value) {
-                      if (value != null) {
-                        setState(() {
-                          nationalIdImage = value;
-                          orderModel.nationalidimage = value;
-                        });
-                      }
-                    }),
-                    child: nationalIdImage == null
-                        ? Image.asset("$imagePath/upload-photo.png")
-                        : InkWell(
-                            onTap: () => showImage(context, nationalIdImage!),
-                            child: Image.file(
-                              nationalIdImage!,
-                              height: 50,
-                              width: 50,
-                              fit: BoxFit.fill,
-                            ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            isNationalIdSelected = true;
+                            isCommercialRecordSelected = false;
+                          });
+                        },
+                        child: Text(
+                          'الهوية الوطنية',
+                          style: TextStyle(
+                            fontSize: 14,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.grey,
                           ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            isNationalIdSelected = false;
+                            isCommercialRecordSelected = true;
+                          });
+                        },
+                        child: Text(
+                          "| السجل التجاري",
+                          style: TextStyle(
+                              fontSize: 14,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.grey),
+                        ),
+                      ),
+                    ],
                   ),
+                  SizedBox(
+                    height: constVerticalPadding,
+                  ),
+                  // Show text fields if "الهوية الوطنية" is selected
+                  if (isNationalIdSelected) ...[
+                    Text('رقم الهوية', style: TextStyle(fontSize: 12)),
+                    SizedBox(height: constVerticalPadding),
+                    // Text field for "رقم الهوية"
+                    TextFormFieldCustom(
+                      inputType: TextInputType.number,
+                      context: context,
+                      labelText: "", // Optional field
+                      controller: nationalIdControlller,
+                      onChanged: (value) {
+                        orderModel.nationalIdNumber = value.toString();
+                      },
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    // Date picker for "تاريخ الميلاد"
+                    Text(
+                      'تاريخ الميلاد',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    GestureDetector(
+                      onTap: () async {
+                        DateTime? selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900), // Set minimum date
+                          lastDate: DateTime.now(), // Set maximum date
+                          builder: (BuildContext context, Widget? child) {
+                            return Theme(
+                              data: ThemeData.light().copyWith(
+                                primaryColor:
+                                    primaryColor, // Customize primary color
+
+                                colorScheme:
+                                    ColorScheme.light(primary: primaryColor),
+                                buttonTheme: ButtonThemeData(
+                                    textTheme: ButtonTextTheme.primary),
+                                // Customizing text styles
+                                textTheme: TextTheme(
+                                  bodySmall: TextStyle(fontSize: 10.0),
+                                  headlineMedium: TextStyle(
+                                      fontSize:
+                                          10.0), // Change font size for the date
+                                  // You can customize other text styles here
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+
+                        if (selectedDate != null) {
+                          final formattedDate = "${selectedDate.toLocal()}"
+                              .split(' ')[0]; // Format to "YYYY-MM-DD"
+                          birtController.text =
+                              formattedDate; // Update the controller text
+                        }
+                      },
+                      child: AbsorbPointer(
+                        // Prevent keyboard from showing
+                        child: TextFormFieldCustom(
+                          inputType: TextInputType.datetime,
+                          context: context,
+                          labelText: "", // Optional field
+                          controller: birtController,
+                          onChanged: (value) {
+                            // Handle changes if needed
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+
+                  // File upload if "السجل التجاري" is selected
+                  if (isCommercialRecordSelected)
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "السجل التجاري",
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: constVerticalPadding,
+                        ),
+                        InkWell(
+                          onTap: () =>
+                              pickImageFromGallery(context).then((value) {
+                            if (value != null) {
+                              setState(() {
+                                nationalIdImage = value;
+                                orderModel.nationalidimage = value;
+                              });
+                            }
+                          }),
+                          child: isLocked
+                              ? Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        // Show the image in a dialog when clicked
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return Dialog(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Image.file(
+                                                    nationalIdImage!,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('Close'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Image.file(
+                                        nationalIdImage!,
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        // Unlock the image and show the text field again
+                                        setState(() {
+                                          isLocked = false;
+                                          nationalIdImage = null;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                )
+                              : InkWell(
+                                  onTap: () => pickImageFromGallery(context)
+                                      .then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        nationalIdImage = value;
+                                        orderModel.nationalidimage = value;
+                                        isLocked =
+                                            true; // Lock the image when selected
+                                      });
+                                    }
+                                  }),
+                                  child: Image.asset(
+                                      "$imagePath/upload-photo.png"),
+                                ),
+                        ),
+                      ],
+                    ),
                   SizedBox(height: constVerticalPadding),
                   Text(
                     local.electronicDeed,
@@ -146,58 +335,116 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                         });
                       }
                     }),
-                    child: electronicImage == null
-                        ? Image.asset("$imagePath/upload-photo.png")
+                    child: isLocked2
+                        ? Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  // Show the image in a dialog when clicked
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return Dialog(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Image.file(
+                                              electronicImage!,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Close'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Image.file(
+                                  electronicImage!,
+                                  height: 50,
+                                  width: 50,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              Spacer(),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.close,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () {
+                                  // Unlock the image and show the text field again
+                                  setState(() {
+                                    isLocked2 = false;
+                                    electronicImage = null;
+                                  });
+                                },
+                              ),
+                            ],
+                          )
                         : InkWell(
-                            onTap: () => showImage(context, electronicImage!),
-                            child: Image.file(
-                              electronicImage!,
-                              height: 50,
-                              width: 50,
-                              fit: BoxFit.fill,
-                            ),
+                            onTap: () =>
+                                pickImageFromGallery(context).then((value) {
+                              if (value != null) {
+                                setState(() {
+                                  electronicImage = value;
+                                  orderModel.electronicimage = value;
+                                  isLocked2 =
+                                      true; // Lock the image when selected
+                                });
+                              }
+                            }),
+                            child: Image.asset("$imagePath/upload-photo.png"),
                           ),
                   ),
-                  SizedBox(height: constVerticalPadding),
-                  Text(
-                    local.addSoilTestReport,
-                    style: TextStyle(fontSize: 12, color: blackColor),
-                  ),
-                  Text(
-                    local.additionalCostIfNotAvailable,
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Colors.red,
-                          fontWeight: mainFontWeight,
-                          fontSize: 12,
-                        ),
-                  ),
-                  SizedBox(height: constVerticalPadding),
-                  InkWell(
-                    onTap: () => pickImageFromGallery(context).then((value) {
-                      if (value != null) {
-                        setState(() {
-                          landCheckImage = value;
-                          orderModel.landCheckImage = value;
-                        });
-                      } else if (value == "" || value == null) {
-                        setState(() {
-                          landCheckImage = "no image";
-                          orderModel.landCheckImage = "no image";
-                        });
-                      }
-                    }),
-                    child: landCheckImage == null
-                        ? Image.asset("$imagePath/upload-photo.png")
-                        : InkWell(
-                            onTap: () => showImage(context, landCheckImage),
-                            child: Image.file(
-                              landCheckImage,
-                              height: 50,
-                              width: 50,
-                              fit: BoxFit.fill,
+                  orderModel.islandChecked == 1
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: constVerticalPadding,
                             ),
-                          ),
-                  ),
+                            Text(
+                              local.addSoilTestReport,
+                              style: TextStyle(fontSize: 12, color: blackColor),
+                            ),
+                            SizedBox(height: constVerticalPadding),
+                            InkWell(
+                              onTap: () =>
+                                  pickImageFromGallery(context).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    landCheckImage = value;
+                                    orderModel.landCheckImage = value;
+                                  });
+                                } else if (value == "" || value == null) {
+                                  setState(() {
+                                    landCheckImage = "no image";
+                                    orderModel.landCheckImage = "no image";
+                                  });
+                                }
+                              }),
+                              child: landCheckImage == null
+                                  ? Image.asset("$imagePath/upload-photo.png")
+                                  : InkWell(
+                                      onTap: () =>
+                                          showImage(context, landCheckImage),
+                                      child: Image.file(
+                                        landCheckImage,
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        )
+                      : Container(),
                   SizedBox(height: constVerticalPadding),
                   Text(
                     local.propertyLocation,
@@ -206,6 +453,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                   SizedBox(height: constVerticalPadding),
                   InkWell(
                     onTap: () async {
+                      orderModel.birthDate = birtController.text;
                       await LocationPermission()
                           .requestLocationPermission()
                           .then(
@@ -284,16 +532,40 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                         orderModel.buildtype_id =
                             AppPreferences.getData(key: "type");
 
-                        if (electronicImage == null) {
-                          showSnackBar(context, "من فضلك ارفع الصك الإلكتروني",
+                        if (nationalIdImage == null &&
+                            birtController.text.isEmpty &&
+                            nationalIdControlller.text.isEmpty) {
+                          showSnackBar(
+                              context,
+                              " من فضلك ارفع الهوية الوطنية او السجل التجاري ",
                               redColor);
                           return;
                         }
-                        if (nationalIdImage == null) {
+                        if (nationalIdImage == null &&
+                            isCommercialRecordSelected) {
                           showSnackBar(
-                              context, "من فضلك ارفع الهوية الوطنية", redColor);
+                              context, " من فضلك ارفع السجل اتجاري ", redColor);
                           return;
                         }
+                        if (birtController.text.isEmpty &&
+                            isNationalIdSelected) {
+                          showSnackBar(
+                              context, "من فضلك ادخل تاريخ الميلاد", redColor);
+                          return;
+                        }
+                        if (nationalIdControlller.text.isEmpty &&
+                            isNationalIdSelected) {
+                          showSnackBar(
+                              context, "من فضلك ادخل رقم الهوية", redColor);
+                          return;
+                        }
+                        if (nationalIdControlller.text.length < 10 &&
+                            isNationalIdSelected) {
+                          showSnackBar(context, "يجب ألا يكون الرقم أقل من 10",
+                              redColor);
+                          return;
+                        }
+
                         if (!isLocationConfirmed) {
                           showSnackBar(
                               context, "من فضلك قم بتأكيد الموقع", redColor);

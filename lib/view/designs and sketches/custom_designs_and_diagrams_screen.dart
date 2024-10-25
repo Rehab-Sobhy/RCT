@@ -68,7 +68,7 @@ class _CustomDesignAndDiagramsScreenState
           setState(() {
             isLoading = false;
           });
-          showSnackBar(context, state.errMessage, redColor);
+          // showSnackBar(context, state.errMessage, redColor);
         } else {
           setState(() {
             isLoading = false;
@@ -96,12 +96,12 @@ class _CustomDesignAndDiagramsScreenState
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: BackButtonAppBar(context),
-          body: ModalProgressHUD(
-            inAsyncCall: isLoading,
-            child: Padding(
+        return ModalProgressHUD(
+          inAsyncCall: isLoading,
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: BackButtonAppBar(context),
+            body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: SingleChildScrollView(
                 child: Column(
@@ -153,23 +153,15 @@ class _CustomDesignAndDiagramsScreenState
                       style: TextStyle(fontSize: 12),
                     ),
                     SizedBox(height: constVerticalPadding),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: grey,
-                      ),
-                      child: CustomDropDownList(
-                        list: orderModel.orderNumbers,
-                        selectedValue: _selectedOrderNumber,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedOrderNumber = newValue;
-                          });
-                        },
-                        hint: local.pleaseChooseRequestNumber,
-                      ),
+                    CustomDropDownList(
+                      list: orderModel.orderNumbers,
+                      selectedValue: _selectedOrderNumber,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedOrderNumber = newValue;
+                        });
+                      },
+                      hint: local.pleaseChooseRequestNumber,
                     ),
                     SizedBox(height: constVerticalPadding),
                     Center(

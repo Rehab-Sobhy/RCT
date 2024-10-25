@@ -19,10 +19,10 @@ class HouseModel extends ChangeNotifier {
   dynamic image2;
   dynamic image3;
   dynamic image4;
-
+  dynamic phone;
   late File? electronic_instrument;
-  int? house_space;
-  int? price;
+  dynamic? house_space;
+  dynamic? price;
   dynamic? city_name;
   dynamic? house_type;
   dynamic? house_name;
@@ -30,16 +30,16 @@ class HouseModel extends ChangeNotifier {
   dynamic description;
   File? identity;
   late dynamic number;
-  int user_id = 0;
-  int areaspace_id = 0;
+  dynamic user_id = 0;
+  dynamic areaspace_id = 0;
   double areaspace = 0.0;
-  int type_id = 0;
+  dynamic type_id = 0;
   dynamic design_id;
-  int sketch_id = 0;
-  int preferable_id = 0;
-  int receipt_id = 0;
-  int build_types_price = 0;
-  int build_price = 0;
+  dynamic sketch_id = 0;
+  dynamic preferable_id = 0;
+  dynamic receipt_id = 0;
+  dynamic build_types_price = 0;
+  dynamic build_price = 0;
   List floorDetails = [];
   List<dynamic> orderNumbers = [];
 
@@ -47,7 +47,7 @@ class HouseModel extends ChangeNotifier {
     number = generateRandomNumber().toString();
   }
 
-  int generateRandomNumber() {
+  dynamic generateRandomNumber() {
     final random = Random();
     return random.nextInt(10000) +
         1; // nextInt(10000) generates a number between 0 and 9999, so we add 1 to get a range from 1 to 10000

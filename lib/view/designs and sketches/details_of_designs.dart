@@ -51,7 +51,7 @@ class _ShowDetailsOfDesignsScreenState
         if (state is DesignsInitial) {
           return const Center(child: Text('Press button to fetch data'));
         } else if (state is DesignsLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: Text(""));
         } else if (state is DesignsSuccess) {
           var data = state.designs;
 
@@ -65,48 +65,46 @@ class _ShowDetailsOfDesignsScreenState
             children: [
               Container(
                 height: MediaQuery.of(context).size.height * .55,
-                child: Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      print('Page changed to $index');
-
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
                       ind = index;
-                    },
-                    children: [
-                      ClipRRect(
-                        // borderRadius: BorderRadius.circular(
-                        //     40), // Adjust the radius as needed
-                        child: Image.network(
-                          "$linkServerName/${product["image1"]}",
-                          fit: BoxFit.fill,
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height *
-                              .40, // Adjust the height as needed
-                        ),
+                    });
+                  },
+                  children: [
+                    ClipRRect(
+                      child: Image.network(
+                        product["image1"] != null
+                            ? "$linkServerName/${product["image1"]}"
+                            : "$linkServerName/${product["image"]}",
+                        fit: BoxFit.fill,
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * 0.40,
                       ),
-                      ClipRRect(
-                        // borderRadius: BorderRadius.circular(
-                        //     40), // Adjust the radius as needed
-                        child: Image.network(
-                          "$linkServerName/${product["image2"]}",
-                          width: double.infinity,
-                          fit: BoxFit.fill,
-                          height: 400, // Adjust the height as needed
-                        ),
+                    ),
+                    ClipRRect(
+                      child: Image.network(
+                        product["image2"] != null
+                            ? "$linkServerName/${product["image2"]}"
+                            : "$linkServerName/${product["image"]}",
+                        width: double.infinity,
+                        fit: BoxFit.fill,
+                        height: 400,
                       ),
-                      ClipRRect(
-                        // borderRadius: BorderRadius.circular(
-                        //     40), // Adjust the radius as needed
-                        child: Image.network(
-                          "$linkServerName/${product["image3"]}",
-                          fit: BoxFit.fill,
-                          width: double.infinity,
-                          height: 400, // Adjust the height as needed
-                        ),
+                    ),
+                    ClipRRect(
+                      child: Image.network(
+                        product["image3"] != null
+                            ? "$linkServerName/${product["image3"]}"
+                            : "$linkServerName/${product["image"]}", // Placeholder or default image
+
+                        fit: BoxFit.fill,
+                        width: double.infinity,
+                        height: 400,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(

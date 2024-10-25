@@ -9,7 +9,8 @@ class CooperativeModel extends ChangeNotifier {
   dynamic location;
   String status = "pending";
   String agreement = "yes";
-
+  dynamic nationalIdNumber;
+  dynamic birthDate;
   late File? electronic_instrument;
   File? identity;
   File? schema;

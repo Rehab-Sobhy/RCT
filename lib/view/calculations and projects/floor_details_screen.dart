@@ -33,7 +33,7 @@ class _FloorDetailsScreenState extends State<FloorDetailsScreen> {
   bool isLoading = false;
 
   String? selectedName;
-  dynamic selectedPrice;
+  dynamic selectedPrice = 1;
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _FloorDetailsScreenState extends State<FloorDetailsScreen> {
     late dynamic fencepercent;
     double test;
     late dynamic fonalFormsPrice;
-
+    double width = MediaQuery.of(context).size.width * 2;
     double excavationandbackfill = orderModel.areaspace * 1.5 * 57;
 
     return Scaffold(
@@ -98,150 +98,177 @@ class _FloorDetailsScreenState extends State<FloorDetailsScreen> {
               }
             }
           }
-          return ModalProgressHUD(
-            inAsyncCall: isLoading,
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.sizeOf(context).height / 2.5,
-                        child: orderModel.floorDetails.isEmpty
-                            ? ListView.builder(
-                                itemCount: 3,
-                                itemBuilder: (context, index) {
-                                  String key = complexMap.keys.elementAt(index);
-                                  String value = complexMap[key]!;
-                                  return FloorDetails(
-                                      text: key,
-                                      number: double.tryParse(value));
-                                },
-                              )
-                            : ListView.builder(
-                                itemCount: orderModel.floorDetails.length,
-                                itemBuilder: (context, index) {
-                                  double? size = double.tryParse(
-                                      orderModel.floorDetails[index]["size"]);
-                                  double number =
-                                      (size! / 100) * orderModel.areaspace;
-                                  floorTotal += number;
-                                  return FloorDetails(
-                                    text: orderModel.floorDetails[index]["name"]
-                                        .toString(),
-                                    number: number,
-                                  );
-                                },
-                              ),
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height / 2.5,
+                      child: orderModel.floorDetails.isEmpty
+                          ? ListView.builder(
+                              itemCount: 3,
+                              itemBuilder: (context, index) {
+                                String key = complexMap.keys.elementAt(index);
+                                String value = complexMap[key]!;
+                                return FloorDetails(
+                                    text: key, number: double.tryParse(value));
+                              },
+                            )
+                          : ListView.builder(
+                              itemCount: orderModel.floorDetails.length,
+                              itemBuilder: (context, index) {
+                                print("test ${orderModel.floorDetails.length}");
+                                double? size = double.tryParse(
+                                    orderModel.floorDetails[index]["size"]);
+                                double number =
+                                    (size! / 100) * orderModel.areaspace;
+                                floorTotal += number;
+                                return FloorDetails(
+                                  text: orderModel.floorDetails[index]["name"]
+                                      .toString(),
+                                  number: number,
+                                );
+                              },
+                            ),
+                    ),
+                    Text(
+                      local.typeOfBuilding,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: blackColor.withOpacity(0.5),
+                      ).copyWith(
+                        fontWeight: mainFontWeight,
                       ),
-                      Text(
-                        local.typeOfBuilding,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: blackColor.withOpacity(0.5),
-                        ).copyWith(
-                          fontWeight: mainFontWeight,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 80.h,
-                        width: double.infinity,
+                    ),
+                    SizedBox(
+                      height: constVerticalPadding,
+                    ),
+                    SizedBox(
+                      height: 80,
+                      width: double.infinity,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                10.0), // Adjust the value for equal spacing
                         child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: buildTypesModel.length,
-                            itemBuilder: (context, index) {
-                              return buildCard(index,
-                                  "${buildTypesModel[index].name!} ${buildTypesModel[index].price!} ريال");
-                            }),
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      Center(
-                        child: MainButton(
-                          text: local.next,
-                          backGroundColor: primaryColor,
-                          onTap: () async {
-                            fencepercent = orderModel.streetDetails ==
-                                    "شارع واحد"
-                                ? 1.97
-                                : orderModel.streetDetails == "شارعين"
-                                    ? 1.8
-                                    : orderModel.streetDetails == " ثلاث شوارع"
-                                        ? 1.65
-                                        : 1.5;
-                            double Fence =
-                                ((orderModel.areaspace / 20) * 2 + 40) /
-                                    fencepercent;
-                            double WaterTank = 23;
-                            double SewageTank = 7;
-                            double bridgesSpace =
-                                ((floorTotal / 10) * 650) / selectedPrice;
-
-                            fonalFormsPrice = orderModel.finalForm ==
-                                    'واجهة ديكورية'
-                                ? sqrt(orderModel.areaspace * 12 / 150) /
-                                    selectedPrice
-                                : orderModel.finalForm == 'واجهة حجر'
-                                    ? (sqrt(orderModel.areaspace) *
-                                            12 *
-                                            1 *
-                                            180) /
-                                        selectedPrice
-                                    : orderModel.finalForm == "واجهتين حجر"
-                                        ? (sqrt(orderModel.areaspace) *
-                                                12 *
-                                                2 *
-                                                180) /
-                                            selectedPrice
-                                        : orderModel.finalForm ==
-                                                "ثلاث واجهات حجر"
-                                            ? (sqrt(orderModel.areaspace) *
-                                                    12 *
-                                                    3 *
-                                                    180) /
-                                                selectedPrice
-                                            : orderModel.finalForm ==
-                                                    "اربع واجهات حجر"
-                                                ? (sqrt(orderModel.areaspace) *
-                                                        12 *
-                                                        4 *
-                                                        180) /
-                                                    selectedPrice
-                                                : 0;
-
-                            if (selectedName != null && selectedPrice != null) {
-                              // Use selectedName and selectedPrice here
-                              if (kDebugMode) {
-                                print('Selected Name: $selectedName');
-                                print('Selected Price: $selectedPrice');
-                              }
-                              // double? cost = double.tryParse(orderModel.cost as String);
-
-                              orderModel.cost = selectedPrice! *
-                                      (floorTotal +
-                                          Fence +
-                                          WaterTank +
-                                          SewageTank +
-                                          orderModel.SwimmingPool +
-                                          fonalFormsPrice +
-                                          bridgesSpace) +
-                                  excavationandbackfill;
-                              await CostCalc().calc(context);
-
-                              print(
-                                  "  $floorTotal + $Fence+ $fonalFormsPrice + $bridgesSpace+ $WaterTank+ $SewageTank+  total ${(floorTotal + Fence + WaterTank + SewageTank + orderModel.SwimmingPool + fonalFormsPrice + bridgesSpace)} + cost ${orderModel.cost} ");
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => TotalCostScreen()));
-                            } else {
-                              showSnackBar(
-                                  context, "اختر نوع البناء", redColor);
-                            }
+                          physics: NeverScrollableScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: buildTypesModel.length,
+                          itemBuilder: (context, index) {
+                            return buildCard(
+                              index,
+                              ''' ${buildTypesModel[index].name!}''',
+                              '''${buildTypesModel[index].price!}''',
+                            );
                           },
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Center(
+                      child: MainButton(
+                        text: local.next,
+                        backGroundColor: primaryColor,
+                        onTap: () async {
+                          fencepercent = orderModel.streetDetails == "شارع واحد"
+                              ? 1.97
+                              : orderModel.streetDetails == "شارعين"
+                                  ? 1.8
+                                  : orderModel.streetDetails == " ثلاث شوارع"
+                                      ? 1.65
+                                      : 1.5;
+                          double Fence =
+                              ((orderModel.areaspace / 20) * 2 + 40) /
+                                  fencepercent;
+                          double WaterTank = 23;
+                          double SewageTank = 7;
+                          double bridgesSpace =
+                              (((floorTotal / 10) * 650) / selectedPrice);
+
+                          fonalFormsPrice = orderModel.finalForm ==
+                                  'واجهة ديكورية'
+                              ? sqrt(orderModel.areaspace * 12 / 150) /
+                                  selectedPrice
+                              : orderModel.finalForm == 'واجهة حجر'
+                                  ? (sqrt(orderModel.areaspace) *
+                                          12 *
+                                          1 *
+                                          180) /
+                                      selectedPrice
+                                  : orderModel.finalForm == "واجهتين حجر"
+                                      ? (sqrt(orderModel.areaspace) *
+                                              12 *
+                                              2 *
+                                              180) /
+                                          selectedPrice
+                                      : orderModel.finalForm ==
+                                              "ثلاث واجهات حجر"
+                                          ? (sqrt(orderModel.areaspace) *
+                                                  12 *
+                                                  3 *
+                                                  180) /
+                                              selectedPrice
+                                          : orderModel.finalForm ==
+                                                  "اربع واجهات حجر"
+                                              ? (sqrt(orderModel.areaspace) *
+                                                      12 *
+                                                      4 *
+                                                      180) /
+                                                  selectedPrice
+                                              : 0;
+                          dynamic islandChecked =
+                              orderModel.islandChecked == 1 ? 0 : 2000;
+                          AppPreferences.saveData(key: 'fence', value: Fence);
+                          AppPreferences.saveData(
+                              key: 'Finalforms', value: fonalFormsPrice);
+
+                          AppPreferences.saveData(
+                              key: 'floorTotal', value: floorTotal);
+                          //excavationandbackfill
+
+                          AppPreferences.saveData(
+                              key: 'excavationandbackfill',
+                              value: excavationandbackfill);
+
+                          AppPreferences.saveData(
+                              key: 'bridge', value: bridgesSpace);
+
+                          double all = (floorTotal +
+                              Fence +
+                              WaterTank +
+                              SewageTank +
+                              orderModel.SwimmingPool +
+                              fonalFormsPrice +
+                              bridgesSpace);
+                          AppPreferences.saveData(key: 'all', value: all);
+                          if (selectedName != null && selectedPrice != null) {
+                            // Use selectedName and selectedPrice here
+                            if (kDebugMode) {
+                              print('Selected Name: $selectedName');
+                              print('Selected Price: $selectedPrice');
+                            }
+                            // double? cost = double.tryParse(orderModel.cost as String);
+                            print(orderModel.cost);
+                            print("****");
+                            orderModel.cost = (selectedPrice! * all) +
+                                excavationandbackfill +
+                                islandChecked;
+                            // await CostCalc().calc(context);
+
+                            print(
+                                "$selectedPrice   ${orderModel.cost}**  $floorTotal + $Fence+ $fonalFormsPrice + $bridgesSpace+ $WaterTank+ $SewageTank+  total ${(floorTotal + Fence + WaterTank + SewageTank + orderModel.SwimmingPool + fonalFormsPrice + bridgesSpace)} + cost ${orderModel.cost} ");
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => TotalCostScreen()));
+                          } else {
+                            showSnackBar(context, "اختر نوع البناء", redColor);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -251,7 +278,7 @@ class _FloorDetailsScreenState extends State<FloorDetailsScreen> {
     );
   }
 
-  Widget buildCard(int index, String text) {
+  Widget buildCard(int index, String text, String price) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -262,15 +289,22 @@ class _FloorDetailsScreenState extends State<FloorDetailsScreen> {
               key: "type", value: buildTypesModel[index].id);
         });
       },
-      child: SizedBox(
-        height: 80.h,
-        width: 120.w,
-        child: Card(
-          color: _selectedCardIndex == index ? darkGrey : whiteBackGround,
-          surfaceTintColor: whiteBackGround,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(child: Text(text)),
+      child: IntrinsicHeight(
+        child: Container(
+          width: 120.w,
+          child: Card(
+            color: _selectedCardIndex == index ? darkGrey : whiteBackGround,
+            surfaceTintColor: whiteBackGround,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                  child: Column(
+                children: [
+                  Text(text),
+                  Text(price),
+                ],
+              )),
+            ),
           ),
         ),
       ),
@@ -301,16 +335,17 @@ class FloorDetails extends StatelessWidget {
           ),
         ),
         SizedBox(height: constVerticalPadding),
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: grey,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          width: 400.w,
-          height: 50.h,
-          child: Text(
-            number.toString(),
+        IntrinsicHeight(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: grey,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            width: 400.w,
+            child: Text(
+              number.toString(),
+            ),
           ),
         ),
         SizedBox(

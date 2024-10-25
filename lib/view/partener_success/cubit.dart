@@ -39,14 +39,10 @@ class ParetenerCubit extends Cubit<PartenerStates> {
         ),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Full response: ${response.data}');
-
       if (response.statusCode == 200) {
         var clients = response.data['data'];
 
         if (clients == null || clients.isEmpty) {
-          print('Client data is null or empty');
           emit(PartenerFailed(message: 'No clients available'));
           return;
         }
@@ -63,7 +59,6 @@ class ParetenerCubit extends Cubit<PartenerStates> {
     } on DioError catch (e) {
       _handleDioError(e);
     } catch (e) {
-      print('Error: $e');
       emit(PartenerFailed(message: 'Error: $e'));
     }
   }
@@ -71,8 +66,6 @@ class ParetenerCubit extends Cubit<PartenerStates> {
   // Handle Dio errors in a centralized method
   void _handleDioError(DioError e) {
     if (e.response != null) {
-      print(
-          'Dio error! STATUS: ${e.response?.statusCode}, DATA: ${e.response?.data}, HEADERS: ${e.response?.headers}');
       if (e.response?.statusCode == 403) {
         emit(PartenerFailed(
             message: 'Unauthorized access. Please check your credentials.'));
@@ -82,7 +75,6 @@ class ParetenerCubit extends Cubit<PartenerStates> {
                 'Error! STATUS: ${e.response?.statusCode}, DATA: ${e.response?.data}'));
       }
     } else {
-      print('Error sending request: ${e.message}');
       emit(PartenerFailed(message: 'Error sending request: ${e.message}'));
     }
   }

@@ -39,7 +39,7 @@ class _SketchesScreenState extends State<SketchesScreen> {
                 child: BlocBuilder<SketchesCubit, SketchesState>(
                   builder: (context, state) {
                     if (state is SketchesLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: Text(""));
                     } else if (state is SketchesFailure) {
                       print("Error in sketches screen: $state ");
                       return Image.asset(

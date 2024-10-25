@@ -6,7 +6,7 @@ import 'package:rct/constants/constants.dart';
 class Custom_textField extends StatelessWidget {
   String textt;
   String hintText;
-
+  TextInputType? keyboardType;
   TextEditingController controller = TextEditingController();
   Custom_textField({
     super.key,
@@ -14,7 +14,7 @@ class Custom_textField extends StatelessWidget {
     required this.textt,
     required this.controller,
     required String? Function(dynamic value) validator,
-    required TextInputType keyboardType,
+    this.keyboardType,
   });
 
   @override
@@ -37,6 +37,7 @@ class Custom_textField extends StatelessWidget {
             height: 10,
           ),
           TextField(
+              keyboardType: keyboardType,
               controller: controller,
               decoration: InputDecoration(
                 floatingLabelAlignment: FloatingLabelAlignment.start,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:provider/provider.dart';
 import 'package:rct/common%20copounents/app_bar_back_button.dart';
 import 'package:rct/common%20copounents/custom_dropdownlist.dart';
@@ -90,39 +91,34 @@ class _DesignsFormState extends State<DesignsForm> {
           }
         },
         builder: (BuildContext context, Object? state) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    local.otherDetailsOrInformation,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  SizedBox(height: constVerticalPadding),
-                  TextFormFieldCustom(
-                    context: context,
-                    border: false,
-                    length: 100,
-                    labelText: local.pleaseWriteOtherDetails,
-                    onChanged: (value) {},
-                    controller: controller,
-                  ),
-                  SizedBox(height: constVerticalPadding),
-                  Text(
-                    local.enterRequestNumber,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  SizedBox(height: constVerticalPadding),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: grey,
+          return ModalProgressHUD(
+            inAsyncCall: isLoading,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      local.otherDetailsOrInformation,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                    child: CustomDropDownList(
+                    SizedBox(height: constVerticalPadding),
+                    TextFormFieldCustom(
+                      context: context,
+                      border: false,
+                      length: 100,
+                      labelText: local.pleaseWriteOtherDetails,
+                      onChanged: (value) {},
+                      controller: controller,
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Text(
+                      local.enterRequestNumber,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    CustomDropDownList(
                       list: items,
                       selectedValue: _selectedType,
                       onChanged: (String? newValue) {
@@ -135,36 +131,36 @@ class _DesignsFormState extends State<DesignsForm> {
                       },
                       hint: local.pleaseChooseRequestNumber,
                     ),
-                  ),
-                  SizedBox(height: constVerticalPadding),
-                  Center(
-                    child: MainButton(
-                      text: local.submitRequest,
-                      backGroundColor: primaryColor,
-                      onTap: () async {
-                        if (_selectedType == null || _selectedType!.isEmpty) {
-                          // Show a snackbar or another form of feedback if order number is not selected
-                          showSnackBar(context, local.pleaseChooseRequestNumber,
-                              redColor);
-                        } else {
-                          // Proceed with the submission
-                          print("wid ${widget.id}");
-                          housemodel.orderNumber = _selectedType.toString();
+                    SizedBox(height: constVerticalPadding),
+                    Center(
+                      child: MainButton(
+                        text: local.submitRequest,
+                        backGroundColor: primaryColor,
+                        onTap: () async {
+                          if (_selectedType == null || _selectedType!.isEmpty) {
+                            // Show a snackbar or another form of feedback if order number is not selected
+                            showSnackBar(context,
+                                local.pleaseChooseRequestNumber, redColor);
+                          } else {
+                            // Proceed with the submission
+                            print("wid ${widget.id}");
+                            housemodel.orderNumber = _selectedType.toString();
 
-                          housemodel.description = controller.text.isEmpty
-                              ? "no description in design"
-                              : controller.text;
-                          housemodel.design_id = widget.id.toString();
+                            housemodel.description = controller.text.isEmpty
+                                ? "no description in design"
+                                : controller.text;
+                            housemodel.design_id = widget.id.toString();
 
-                          await context
-                              .read<FinalOrdersCubit>()
-                              .PostDes(context);
-                        }
-                      },
+                            await context
+                                .read<FinalOrdersCubit>()
+                                .PostDes(context);
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                  if (isLoading) Center(child: CircularProgressIndicator()),
-                ],
+                    if (isLoading) Center(child: Text("")),
+                  ],
+                ),
               ),
             ),
           );

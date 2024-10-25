@@ -98,22 +98,37 @@ class FinalOrdersCubit extends Cubit<FinalOrdersStates> {
 
       if (response.statusCode == 200) {
         var responseData = response.data;
+        print("API Response Data: $responseData");
 
         if (responseData is Map<String, dynamic>) {
-          var data = responseData['rawLands'] ?? [];
-          if (data is List) {
-            rowlandList = data
-                .map<Modelget>((element) => Modelget.fromJson(element))
-                .toList();
-            emit(RawLandOrdersSuccess(rowlandList));
-          } else {
-            emit(RawLandOrdersFaild(
-                'Unexpected data type: ${data.runtimeType}'));
-          }
-        } else if (responseData is List) {
-          rowlandList = responseData
+          var rawLandsData = responseData['rawLands'] ?? [];
+          print("Raw Lands Data: $rawLandsData");
+
+          var oldBuildingsData = responseData['oldBuildings'] ?? [];
+
+          var Schema = responseData['Schema'] ?? [];
+          print("Old Buildings Data: $oldBuildingsData");
+
+          List<Modelget> rawLandList = [];
+
+          rawLandList = rawLandsData
               .map<Modelget>((element) => Modelget.fromJson(element))
               .toList();
+
+          List<Modelget> oldBuildingsList = [];
+
+          oldBuildingsList = oldBuildingsData
+              .map<Modelget>((element) => Modelget.fromJson(element))
+              .toList();
+
+          List<Modelget> schema = [];
+
+          schema = Schema.map<Modelget>((element) => Modelget.fromJson(element))
+              .toList();
+
+          rowlandList = [...rawLandList, ...oldBuildingsList, ...schema];
+
+          print("Final Combined List: $rowlandList");
           emit(RawLandOrdersSuccess(rowlandList));
         } else {
           emit(RawLandOrdersFaild('Invalid JSON structure'));

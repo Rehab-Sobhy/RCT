@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // ignore: must_be_immutable
@@ -8,11 +7,12 @@ class FavoritesDetails extends StatefulWidget {
   dynamic image;
   String? name;
 
-  FavoritesDetails(
-      {super.key,
-      required this.description,
-      required this.image,
-      required this.name});
+  FavoritesDetails({
+    super.key,
+    required this.description,
+    required this.image,
+    required this.name,
+  });
 
   @override
   State<FavoritesDetails> createState() => _FavoritesDetailsState();
@@ -23,7 +23,7 @@ class _FavoritesDetailsState extends State<FavoritesDetails> {
   int ind = 0;
   final PageController _pageController = PageController();
 
-  // ignore: annotate_overrides
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -34,69 +34,73 @@ class _FavoritesDetailsState extends State<FavoritesDetails> {
     var local = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          height: MediaQuery.of(context).size.height * .55,
-          child: Expanded(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height * .55,
             child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
                   ind = index;
-                },
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        40), // Adjust the radius as needed
-                    child: Image.network(
-                      "${widget.image}",
-                      fit: BoxFit.fill,
-                      width: double.infinity,
-                      height: MediaQuery.of(context).size.height *
-                          .40, // Adjust the height as needed
-                    ),
+                });
+              },
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(40),
+                  child: Image.network(
+                    widget.image ?? 'https://via.placeholder.com/150',
+                    fit: BoxFit.fill,
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * .40,
                   ),
-                ]),
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            "${widget.name}",
-            style: const TextStyle(
-                color: Colors.black, fontSize: 14, fontWeight: FontWeight.w900),
+          SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              widget.name ?? "name",
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
           ),
-        ),
-        const SizedBox(
-          height: 6,
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            "الوصف",
-            style: TextStyle(
-                color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w900),
+          const SizedBox(height: 6),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              "الوصف",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            maxLines: 6,
-            overflow: TextOverflow.ellipsis,
-            "${widget.description}",
-            style: const TextStyle(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              widget.description ?? "Details",
+              maxLines: 6,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
                 decoration: TextDecoration.underline,
-                decorationColor:
-                    Colors.black, // Optional: change the color of the underline
+                decorationColor: Colors.black,
                 decorationThickness: .5,
                 color: Colors.black,
                 fontSize: 12,
-                fontWeight: FontWeight.w400),
+                fontWeight: FontWeight.w400,
+              ),
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }

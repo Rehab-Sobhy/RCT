@@ -41,7 +41,7 @@ class _DesignsScreenState extends State<DesignsScreen> {
                 child: BlocBuilder<DesignsCubit, DesignsState>(
                   builder: (context, state) {
                     if (state is DesignsLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: Text(""));
                     } else if (state is DesignsFailure) {
                       print("Error in designs screen: $state ");
                       return Image.asset(

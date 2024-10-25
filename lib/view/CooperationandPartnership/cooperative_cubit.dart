@@ -31,6 +31,8 @@ class CooperativeCubit extends Cubit<Coopeativestates> {
           "lng": cooperativemdel.long,
           "status": cooperativemdel.status,
           "agreement": cooperativemdel.agreement,
+          "client_birth": cooperativemdel.birthDate,
+          "identity_number": cooperativemdel.nationalIdNumber,
         },
         images,
         headers: {

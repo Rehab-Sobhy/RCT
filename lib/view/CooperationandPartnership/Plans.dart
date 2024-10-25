@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:rct/view-model/functions/image_picker.dart';
 import 'package:rct/view-model/functions/location_permission.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,80 +31,50 @@ class PlansScreen extends StatefulWidget {
   State<PlansScreen> createState() => _PlansScreenState();
 }
 
-final List<String> _cities = [
+List<String> _cities = [
   'الرياض',
-  'جده',
-  'المدينه المنوره',
-  'تبوك',
+  'جدة',
+  'مكة المكرمة',
+  'المدينة المنورة',
   'الدمام',
-  'الاحساء',
-  'القطيف',
-  'خميس مشيط',
-  'المظيلف',
-  'الهفوف',
-  'المبرز',
-  'الطائف',
-  'نجران',
-  'حفر الباطن',
-  'الجبيل',
-  'ضباء',
-  'الخرج',
-  'الثقبة',
-  'ينبع البحر',
   'الخبر',
-  'عرعر',
-  'الحوية',
-  'عنيزه',
-  'سكاكا',
-  'جيزان',
-  'القريات',
+  'الأحساء',
   'الظهران',
-  'الباحة',
-  'الزلفي',
-  'الرس',
-  'وادى الدواسر',
-  'بيشه',
-  'سيهات',
-  'شروره',
-  'بحره',
-  'تاروت',
-  'الدوادمى',
-  'صبياء',
-  'بيش',
-  'احد رفيدة',
-  'الفريش',
-  'بارق',
-  'الحوطه',
-  'الافلاج'
+  'القصيم',
+  'أبها',
+  'حائل',
+  'تبوك',
+  'الجوف',
+  'القريات',
+  'خميس مشيط',
+  'جازان',
+  'نجران',
+  'ينبع',
+  'الهفوف',
+  'القطيف',
+  'بريدة',
+  'عنيزة',
 ];
 
 class _PlansScreenState extends State<PlansScreen> {
   TextEditingController locationcontroller = TextEditingController();
   TextEditingController distrectnameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  TextEditingController nationalIdControlller = TextEditingController();
+  TextEditingController birtController = TextEditingController();
   String? selectedCity;
-  File? identity;
-  bool loc = false;
+  File? nationalIdImage;
   File? electronicimage;
-  File? schema;
   bool isLoading = false;
   bool isLocationConfirmed = false;
   final ImagePicker _picker = ImagePicker();
-
-  Future<void> pickImageFromGallery() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        // Check if the image is for identity or electronic image
-        if (identity == null) {
-          identity = File(image.path);
-        } else if (electronicimage == null) {
-          electronicimage = File(image.path);
-        } else
-          schema = File(image.path);
-      });
-    }
-  }
+  bool loc = false;
+  bool isLocked = false;
+  bool isLocked2 = false;
+  bool isLocked3 = false;
+  bool isNationalIdSelected = false;
+  bool isCommercialRecordSelected = false;
+  File? schema;
 
   void _showImage(File image) {
     showDialog(
@@ -121,8 +92,28 @@ class _PlansScreenState extends State<PlansScreen> {
 
   void _validateAndSubmit(
       BuildContext context, CooperativeModel cooperativeModel) async {
-    if (identity == null) {
-      showSnackBar(context, "من فضلك ارفع الهوية الوطنية", redColor);
+    if (nationalIdImage == null &&
+        birtController.text.isEmpty &&
+        nationalIdControlller.text.isEmpty) {
+      showSnackBar(
+          context, " من فضلك ارفع الهوية الوطنية او السجل التجاري ", redColor);
+      return;
+    }
+    if (nationalIdImage == null && isCommercialRecordSelected) {
+      showSnackBar(context, " من فضلك ارفع السجل اتجاري ", redColor);
+      return;
+    }
+
+    if (nationalIdControlller.text.length < 10 && isNationalIdSelected) {
+      showSnackBar(context, "يجب ألا يكون الرقم أقل من 10", redColor);
+      return;
+    }
+    if (birtController.text.isEmpty && isNationalIdSelected) {
+      showSnackBar(context, "من فضلك ادخل تاريخ الميلاد", redColor);
+      return;
+    }
+    if (nationalIdControlller.text.isEmpty && isNationalIdSelected) {
+      showSnackBar(context, "من فضلك ادخل رقم الهوية", redColor);
       return;
     }
     if (electronicimage == null) {
@@ -154,10 +145,12 @@ class _PlansScreenState extends State<PlansScreen> {
       cooperativeModel.price = int.tryParse(priceController.text);
     cooperativeModel.district_name = distrectnameController.text;
     cooperativeModel.city_name = selectedCity;
-    cooperativeModel.identity = identity;
+    cooperativeModel.identity = nationalIdImage;
     cooperativeModel.electronic_instrument = electronicimage;
     cooperativeModel.schema = schema;
     cooperativeModel.location = locationcontroller.text;
+    cooperativeModel.nationalIdNumber = nationalIdControlller.text;
+    cooperativeModel.birthDate = birtController.text;
     await context.read<CooperativeCubit>().PlansFunction(context);
   }
 
@@ -222,51 +215,297 @@ class _PlansScreenState extends State<PlansScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      local.nationalIdOrCommercialRegister,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black.withOpacity(0.5),
-                      ),
-                    ),
-                    SizedBox(height: 15),
-                    identity != null
-                        ? GestureDetector(
-                            onTap: () => _showImage(identity!),
-                            child: Image.file(
-                              identity!,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              isNationalIdSelected = true;
+                              isCommercialRecordSelected = false;
+                            });
+                          },
+                          child: Text(
+                            'الهوية الوطنية',
+                            style: TextStyle(
+                              fontSize: 14,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.grey,
                             ),
-                          )
-                        : InkWell(
-                            child: Image.asset("$imagePath/upload-photo.png"),
-                            onTap: pickImageFromGallery,
                           ),
-                    SizedBox(height: 15),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              isNationalIdSelected = false;
+                              isCommercialRecordSelected = true;
+                            });
+                          },
+                          child: Text(
+                            "| السجل التجاري",
+                            style: TextStyle(
+                                fontSize: 14,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: constVerticalPadding,
+                    ),
+                    // Show text fields if "الهوية الوطنية" is selected
+                    if (isNationalIdSelected) ...[
+                      Text('رقم الهوية', style: TextStyle(fontSize: 12)),
+                      SizedBox(height: constVerticalPadding),
+                      // Text field for "رقم الهوية"
+                      TextFormFieldCustom(
+                        inputType: TextInputType.number,
+                        context: context,
+                        labelText: "", // Optional field
+                        controller: nationalIdControlller,
+                        onChanged: (value) {},
+                      ),
+                      SizedBox(height: constVerticalPadding),
+                      // Date picker for "تاريخ الميلاد"
+                      Text(
+                        'تاريخ الميلاد',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      SizedBox(height: constVerticalPadding),
+                      GestureDetector(
+                        onTap: () async {
+                          DateTime? selectedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1900), // Set minimum date
+                            lastDate: DateTime.now(), // Set maximum date
+                            builder: (BuildContext context, Widget? child) {
+                              return Theme(
+                                data: ThemeData.light().copyWith(
+                                  primaryColor:
+                                      primaryColor, // Customize primary color
+
+                                  colorScheme:
+                                      ColorScheme.light(primary: primaryColor),
+                                  buttonTheme: ButtonThemeData(
+                                      textTheme: ButtonTextTheme.primary),
+                                  // Customizing text styles
+                                  textTheme: TextTheme(
+                                    bodySmall: TextStyle(fontSize: 10.0),
+                                    headlineMedium: TextStyle(
+                                        fontSize:
+                                            10.0), // Change font size for the date
+                                    // You can customize other text styles here
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+
+                          if (selectedDate != null) {
+                            final formattedDate = "${selectedDate.toLocal()}"
+                                .split(' ')[0]; // Format to "YYYY-MM-DD"
+                            birtController.text =
+                                formattedDate; // Update the controller text
+                          }
+                        },
+                        child: AbsorbPointer(
+                          // Prevent keyboard from showing
+                          child: TextFormFieldCustom(
+                            inputType: TextInputType.datetime,
+                            context: context,
+                            labelText: "", // Optional field
+                            controller: birtController,
+                            onChanged: (value) {
+                              // Handle changes if needed
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    // File upload if "السجل التجاري" is selected
+                    if (isCommercialRecordSelected)
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "السجل التجاري",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: constVerticalPadding,
+                          ),
+                          InkWell(
+                            onTap: () =>
+                                pickImageFromGallery(context).then((value) {
+                              if (value != null) {
+                                setState(() {
+                                  nationalIdImage = value;
+                                  cooperativeModel.identity = value;
+                                });
+                              }
+                            }),
+                            child: isLocked
+                                ? Row(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          // Show the image in a dialog when clicked
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return Dialog(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Image.file(
+                                                      nationalIdImage!,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: Text('Close'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Image.file(
+                                          nationalIdImage!,
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.close,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          // Unlock the image and show the text field again
+                                          setState(() {
+                                            isLocked = false;
+                                            nationalIdImage = null;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                : InkWell(
+                                    onTap: () => pickImageFromGallery(context)
+                                        .then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          nationalIdImage = value;
+                                          cooperativeModel.identity = value;
+                                          isLocked =
+                                              true; // Lock the image when selected
+                                        });
+                                      }
+                                    }),
+                                    child: Image.asset(
+                                        "$imagePath/upload-photo.png"),
+                                  ),
+                          ),
+                        ],
+                      ),
+                    SizedBox(height: constVerticalPadding),
                     Text(
                       local.electronicDeed,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black.withOpacity(0.5),
-                      ),
+                      style: TextStyle(fontSize: 12, color: blackColor),
                     ),
-                    SizedBox(height: 15),
-                    electronicimage != null
-                        ? GestureDetector(
-                            onTap: () => _showImage(electronicimage!),
-                            child: Image.file(
-                              electronicimage!,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
+                    SizedBox(height: constVerticalPadding),
+                    InkWell(
+                      onTap: () => pickImageFromGallery(context).then((value) {
+                        if (value != null) {
+                          setState(() {
+                            electronicimage = value;
+                            cooperativeModel.electronic_instrument = value;
+                          });
+                        }
+                      }),
+                      child: isLocked2
+                          ? Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    // Show the image in a dialog when clicked
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Image.file(
+                                                electronicimage!,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text('Close'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Image.file(
+                                    electronicimage!,
+                                    height: 50,
+                                    width: 50,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                Spacer(),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    // Unlock the image and show the text field again
+                                    setState(() {
+                                      isLocked2 = false;
+                                      electronicimage = null;
+                                    });
+                                  },
+                                ),
+                              ],
+                            )
+                          : InkWell(
+                              onTap: () =>
+                                  pickImageFromGallery(context).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    electronicimage = value;
+                                    cooperativeModel.electronic_instrument =
+                                        value;
+                                    isLocked2 =
+                                        true; // Lock the image when selected
+                                  });
+                                }
+                              }),
+                              child: Image.asset("$imagePath/upload-photo.png"),
                             ),
-                          )
-                        : InkWell(
-                            child: Image.asset("$imagePath/upload-photo.png"),
-                            onTap: pickImageFromGallery,
-                          ),
+                    ),
                     SizedBox(height: 15),
                     Text(
                       "رفاق التصميم أو المخطط",
@@ -276,28 +515,91 @@ class _PlansScreenState extends State<PlansScreen> {
                       ),
                     ),
                     SizedBox(height: 15),
-                    schema != null
-                        ? GestureDetector(
-                            onTap: () => _showImage(schema!),
-                            child: Image.file(
-                              schema!,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
+                    InkWell(
+                      onTap: () => pickImageFromGallery(context).then((value) {
+                        if (value != null) {
+                          setState(() {
+                            schema = value;
+                            cooperativeModel.schema = value;
+                          });
+                        }
+                      }),
+                      child: isLocked3
+                          ? Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    // Show the image in a dialog when clicked
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Image.file(
+                                                schema!,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text('Close'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Image.file(
+                                    schema!,
+                                    height: 50,
+                                    width: 50,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                Spacer(),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    // Unlock the image and show the text field again
+                                    setState(() {
+                                      isLocked3 = false;
+                                      schema = null;
+                                    });
+                                  },
+                                ),
+                              ],
+                            )
+                          : InkWell(
+                              onTap: () =>
+                                  pickImageFromGallery(context).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    schema = value;
+                                    cooperativeModel.schema = value;
+                                    isLocked3 =
+                                        true; // Lock the image when selected
+                                  });
+                                }
+                              }),
+                              child: Image.asset("$imagePath/upload-photo.png"),
                             ),
-                          )
-                        : InkWell(
-                            child: Image.asset("$imagePath/upload-photo.png"),
-                            onTap: pickImageFromGallery,
-                          ),
-                    SizedBox(height: 15),
+                    ),
+                    SizedBox(height: constVerticalPadding),
                     Custom_textField(
                       hintText: "",
                       textt: local.price,
                       controller: priceController,
-                      validator: (value) {},
                       keyboardType: TextInputType.number,
+                      validator: (value) {},
                     ),
+                    SizedBox(height: constVerticalPadding),
                     SizedBox(height: 15),
                     Text(
                       local.city,
@@ -441,6 +743,7 @@ class _PlansScreenState extends State<PlansScreen> {
                         text: local.send,
                         backGroundColor: primaryColor,
                         onTap: () async {
+                          cooperativeModel.birthDate = birtController.text;
                           if (locationcontroller.text.isNotEmpty) {
                             loc = true;
                           }
@@ -448,7 +751,7 @@ class _PlansScreenState extends State<PlansScreen> {
                           if (selectedCity != null &&
                               distrectnameController.text.isNotEmpty &&
                               priceController.text.isNotEmpty &&
-                              identity != null &&
+                              nationalIdImage != null &&
                               electronicimage != null) {
                             _validateAndSubmit(context, cooperativeModel);
                           } else {

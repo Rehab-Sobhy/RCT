@@ -19,11 +19,9 @@ class BuildTypesAndFloorsCubit extends Cubit<BuildTypesAndFloorsState> {
     try {
       final response = await _crud.getRequest(linkBuildstypes);
       final floorCounts = await _crud.getRequest(
-          // orderModel.type_id == null||  orderModel.type_id==""
-
-          //   ?
-          "$linkServerName/api/builds/1/floors");
-      // : "$linkServerName/api/builds/${orderModel.type_id}/floors");
+          orderModel.type_id != null && orderModel.type_id != ""
+              ? "$linkServerName/api/builds/${orderModel.type_id}/floors"
+              : "$linkServerName/api/builds/1/floors");
 
       if (response.containsKey("data")) {
         if (kDebugMode) {

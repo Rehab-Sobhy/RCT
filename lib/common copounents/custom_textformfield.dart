@@ -17,6 +17,8 @@ class TextFormFieldCustom extends StatelessWidget {
   bool? password = false;
   String? value;
   double length;
+  String? Text;
+  TextInputType? inputType;
 
   TextFormFieldCustom({
     super.key,
@@ -26,6 +28,8 @@ class TextFormFieldCustom extends StatelessWidget {
     required this.controller,
     // this.validatorErrorMessage,
     this.border,
+    this.inputType,
+    this.Text,
     this.enabled,
     this.value,
     this.number,
@@ -49,9 +53,13 @@ class TextFormFieldCustom extends StatelessWidget {
         },
         onChanged: (value) => onChanged(value),
         enabled: enabled,
-        keyboardType:
-            number == true ? TextInputType.number : TextInputType.text,
+        keyboardType: inputType,
         decoration: InputDecoration(
+          suffixText: Text,
+          suffixStyle: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold), // Style for the suffix
+
           // contentPadding: length == 0 ? null : EdgeInsets.only(bottom: length),
           hintText: labelText,
           floatingLabelAlignment: FloatingLabelAlignment.start,

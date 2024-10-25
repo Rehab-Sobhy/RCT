@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:rct/common%20copounents/app_bar_back_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rct/constants/constants.dart';
@@ -15,12 +14,11 @@ class PrivacysScreen extends StatefulWidget {
 }
 
 class _PrivacysScreenState extends State<PrivacysScreen> {
-  bool isLoading = false;
   final Crud crud = Crud();
   List<String?> termsConditions = [];
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchPrivacys();
   }
@@ -31,54 +29,50 @@ class _PrivacysScreenState extends State<PrivacysScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BackButtonAppBar(context),
-      body: ModalProgressHUD(
-        inAsyncCall: isLoading,
-        child: Center(
-          child: Column(
-            children: [
-              Text(
-                local.privacyPolicy,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: constVerticalPadding),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: termsConditions.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
+      body: Center(
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Centralize horizontally
+          children: [
+            Text(
+              local.privacyPolicy,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: constVerticalPadding),
+            Expanded(
+              child: ListView.builder(
+                itemCount: termsConditions.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
                       child: Text(
                         termsConditions[index]!,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign
+                            .center, // Center the text within the widget
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Future fetchPrivacys() async {
-    setState(() {
-      isLoading = true;
-    });
     try {
       final response = await crud.getRequest(linkConditions);
       for (var i = 0; i < response["data"].length; i++) {
         termsConditions.add(response["data"][i]["condition"]);
       }
-      print(termsConditions);
+      setState(() {}); // Refresh UI after data is fetched
     } catch (e) {
       print(e);
     }
-    // Fetch terms and conditions
-    setState(() {
-      isLoading = false;
-    });
   }
 }

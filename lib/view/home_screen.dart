@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -13,26 +12,23 @@ import 'package:rct/common%20copounents/pop_up.dart';
 import 'package:rct/constants/constants.dart';
 import 'package:rct/constants/linkapi.dart';
 import 'package:rct/model/order_model.dart';
-import 'package:rct/model/order_model.dart';
+import 'package:rct/view/auth/sendotp.dart';
 import 'package:rct/view/calculations%20and%20projects/measurment_of%20_villa.dart';
-
 import 'package:rct/view/favorite/main_favourite.dart';
 import 'package:rct/shared_pref.dart';
-
 import 'package:rct/view/aboutUs.dart';
-import 'package:rct/view/favorite/favorite.dart';
 import 'package:rct/view/final_orders/final-orders.dart';
 import 'package:rct/main.dart';
 import 'package:rct/view/CooperationandPartnership/choose_building_type.dart';
 import 'package:rct/view/RealEstate/final_offers.dart';
-import 'package:rct/view/auth/login_screen.dart';
+
 import 'package:rct/view/calculations%20and%20projects/measurment_of_field_screen.dart';
 import 'package:rct/view/designs%20and%20sketches/designs_and_screen.dart';
 import 'package:rct/view/auth/edit_profile_screen.dart';
 import 'package:rct/view/final_orders/final_orders_cubit.dart';
 import 'package:rct/view/final_orders/final_orders_states.dart';
 import 'package:rct/view/language_screen.dart';
-import 'package:rct/view/RealEstate/notification/notifications_screen.dart';
+import 'package:rct/view/notification/notifications_screen.dart';
 import 'package:rct/view/partener_success/partners_screen.dart';
 import 'package:rct/view/privacy_screen.dart';
 import 'package:rct/view/terms_conditions_screen.dart';
@@ -47,36 +43,32 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-Future<String?> _getname() async {
-  return AppPreferences.getData(key: 'name');
-}
-
-Future<File?> _getimage() async {
-  return AppPreferences.getData(key: 'image');
-}
-
 class _HomeScreenState extends State<HomeScreen> {
   String name = "";
+  dynamic number;
   dynamic image;
-  double hight = 130.h;
+  double hight = 130;
   String whatsapUrl = "https://wa.me/+966569988788";
   String emailUrl = "support@apprct.info";
   String twitterLink = "https://x.com/rctapplication";
   void initState() {
     context.read<FinalOrdersCubit>().Users();
     _loadNameandiamge();
+    getnotifyNumber();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       setState(() {
         int notificationId = Random().nextInt(1000000) + 10;
         debugPrint('$notificationId');
         AwesomeNotifications().createNotification(
           content: NotificationContent(
-              id: notificationId,
-              channelKey: 'local notification key',
-              displayOnBackground: true,
-              displayOnForeground: true,
-              title: message.notification!.title,
-              body: message.notification!.body),
+            id: notificationId,
+            channelKey: 'local notification key',
+            displayOnBackground: true,
+            displayOnForeground: true,
+            title: message.notification!.title,
+            body: message.notification!.body,
+         
+          ),
         );
       });
     });
@@ -105,6 +97,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
       image = AppPreferences.getData(key: 'myimage') ??
           'https://images.app.goo.gl/nZvnQQ58zj1YKVNu9'; // Provide a default name if none is saved
+    });
+  }
+
+  Future<void> getnotifyNumber() async {
+    setState(() {
+      number = AppPreferences.getData(key: 'notifyLenghth') ?? 0;
+
+      // Provide a default name if none is saved
     });
   }
 
@@ -137,11 +137,44 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white)),
         actions: [
           InkWell(
-            onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => NotificationScreen())),
-            child: Icon(
-              Icons.notifications_none,
-              color: whiteBackGround,
+            onTap: () {
+              setState(() {
+                number = 0; // Reset notification count
+              });
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
+              );
+            },
+            child: Stack(
+              children: [
+                Icon(
+                  number == 0 || number == "" || number == null
+                      ? Icons.notifications_none
+                      : Icons.notifications,
+                  color: whiteBackGround,
+                ),
+                if (number != 0 && number != "" && number != null)
+                  Positioned(
+                    right: 2,
+                    top: 1,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      constraints: const BoxConstraints(minWidth: 6),
+                      child: Text(
+                        "$number", // Ensure the number is a string
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 4, // Adjusted the font size for visibility
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
           SizedBox(width: 10.w),
@@ -154,61 +187,50 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           children: [
             Padding(
-              padding: EdgeInsets.only(
-                left: 10.w,
-                top: 50.h,
-                bottom: 20.h,
-              ),
+              padding: EdgeInsets.only(left: 10.w, top: 50.h, bottom: 20.h),
               child: BlocConsumer<FinalOrdersCubit, FinalOrdersStates>(
-                listener: (BuildContext context, state) {
+                listener: (context, state) {
                   if (state is UserSucess) {
                     setState(() {
-                      name = state.users.first
-                          .name!; // Use data directly from Cubit state
+                      name = state.users.first.name!;
                       image = "$linkServerName/${state.users.first.image}";
                     });
                   } else if (state is UserFaild) {
-                    // Handle failures or provide default values
                     setState(() {
                       name = 'Default Name';
                       image = 'https://example.com/default-image.png';
                     });
                   }
                 },
-                builder: (BuildContext context, Object? state) {
+                builder: (context, state) {
                   if (state is UserLoading) {
-                    return Center(
-                        child:
-                            CircularProgressIndicator()); // Show loading indicator
+                    return const Center(child: CircularProgressIndicator());
                   }
-                  return Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(image),
-                        radius: 40,
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(image),
+                      radius: 40,
+                    ),
+                    title: Text(
+                      name,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontSize: 12,
+                          ),
+                    ),
+                    subtitle: InkWell(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const EditProfileScreen()),
                       ),
-                      title: Text(
-                        name,
-                        style:
-                            Theme.of(context).textTheme.titleMedium!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                ),
-                      ),
-                      subtitle: InkWell(
-                        onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const EditProfileScreen())),
-                        child: Text(
-                          local.editFile,
-                          style: const TextStyle(
-                              color: Colors.blue,
-                              fontSize: 13,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.blue),
+                      child: Text(
+                        local.editFile,
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 13,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.blue,
                         ),
                       ),
                     ),
@@ -344,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () async {
                 await secureStorage.deleteAll();
                 Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => LoginScreen()));
+                    MaterialPageRoute(builder: (context) => SendOtp()));
                 // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
               },
             ),
@@ -361,9 +383,14 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 300,
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: primaryColor,
-              ),
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(
+                        30,
+                      ),
+                      bottomLeft: Radius.circular(
+                        30,
+                      )),
+                  color: primaryColor),
             ),
           ),
           Positioned.fill(
@@ -506,9 +533,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           context) {
                                                         return ShowPopUp(
                                                           ontap: () async {
-                                                            await launch(
-                                                                whatsapUrl
-                                                                    .toString());
+                                                            Navigator.pop(
+                                                                context);
                                                           },
                                                           title: const Text(
                                                             "يرجى التواصل مع فريق RCT لإتمام طلبك.",
@@ -537,8 +563,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 },
                                                                 child:
                                                                     Container(
-                                                                  height: 40,
-                                                                  width: 40,
+                                                                  height: 25,
                                                                   decoration:
                                                                       const BoxDecoration(
                                                                     shape: BoxShape
@@ -546,7 +571,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   ),
                                                                   child: Image
                                                                       .asset(
-                                                                    "assets/images/Group 469324.png",
+                                                                    "assets/images/watsap.png",
                                                                     fit: BoxFit
                                                                         .fill,
                                                                   ),

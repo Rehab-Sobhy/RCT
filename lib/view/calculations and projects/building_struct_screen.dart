@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:provider/provider.dart';
 import 'package:rct/common%20copounents/app_bar_back_button.dart';
 import 'package:rct/common%20copounents/custom_dropdownlist.dart';
+import 'package:rct/common%20copounents/custom_text.dart';
 import 'package:rct/common%20copounents/custom_textformfield.dart';
 import 'package:rct/common%20copounents/main_button.dart';
 import 'package:rct/constants/constants.dart';
@@ -94,98 +96,110 @@ class _BuildingStructScreenState extends State<BuildingStructScreen> {
                 // Navigation logic should be handled in the button handler
               }
             },
-            child: ModalProgressHUD(
-              inAsyncCall: isLoading,
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        local.buildingMechanism,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: blackColor.withOpacity(0.5),
-                        ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      local.buildingMechanism,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: blackColor.withOpacity(0.5),
                       ),
-                      SizedBox(height: constVerticalPadding + 20),
-                      CustomDropDownList(
-                        list: itemNames,
-                        selectedValue: _selectedType,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            showButton = true;
-                            _selectedType = newValue!;
-                            selectedId = nameToDetails[newValue]!['id'];
-                            selectedPrice = nameToDetails[newValue]!['price'];
-                          });
-                        },
-                        hint: local.chooseType,
-                      ),
-                      SizedBox(height: constVerticalPadding),
-                      Center(
-                        child: showButton
-                            ? _selectedType == "عمائر" ||
-                                    _selectedType == "عمارات"
-                                // ||
-                                // _selectedType == "test1"
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        local.numberOfFloors,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge,
+                    ),
+                    SizedBox(height: constVerticalPadding + 20),
+                    CustomDropDownList(
+                      list: itemNames,
+                      selectedValue: _selectedType,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          showButton = true;
+                          _selectedType = newValue!;
+                          selectedId = nameToDetails[newValue]!['id'];
+                          selectedPrice = nameToDetails[newValue]!['price'];
+                        });
+                      },
+                      hint: "اختر آلية البناء",
+                    ),
+                    SizedBox(height: constVerticalPadding),
+                    Center(
+                      child: showButton
+                          ?
+                          // . _selectedType == "عمائر" ||
+                          //         _selectedType == "عمارات"
+                          // ||
+                          // _selectedType == "test1"
+                          // ? Column(
+                          //     crossAxisAlignment:
+                          //         CrossAxisAlignment.start,
+                          //     children: [
+                          //       Text(
+                          //         local.numberOfFloors,
+                          //         style: Theme.of(context)
+                          //             .textTheme
+                          //             .bodyLarge,
+                          //       ),
+                          //       SizedBox(height: constVerticalPadding),
+                          //       Center(
+                          //         child: MainButton(
+                          //           text: local.next,
+                          //           backGroundColor: primaryColor,
+                          //           onTap: () async {
+                          //             await context
+                          //                 .read<ComplexCubit>()
+                          //                 .createComplex(complexModel);
+                          //             complexModel.floorCount =
+                          //                 floorsController.text;
+                          //             complexModel.departmentCount =
+                          //                 apartmentController.text;
+                          //             complexModel.buildId =
+                          //                 selectedId.toString();
+                          //             orderModel.type_id = selectedId!;
+
+                          //             // Input validation and navigation logic
+
+                          //             Navigator.of(context)
+                          //                 .push(MaterialPageRoute(
+                          //               builder: (context) =>
+                          //                   FloorDetailsScreen(),
+                          //             ));
+                          //           },
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   )
+                          // :
+
+                          GestureDetector(
+                              onDoubleTap: () {
+                                orderModel.type_id = selectedId!;
+
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => FloorDetailsScreen(),
+                                ));
+                              },
+                              child: Container(
+                                  height: 40.h,
+                                  width: 335.w,
+                                  decoration: BoxDecoration(
+                                    color: primaryColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: CustomText(
+                                      text: local.next,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.white,
                                       ),
-                                      SizedBox(height: constVerticalPadding),
-                                      Center(
-                                        child: MainButton(
-                                          text: local.next,
-                                          backGroundColor: primaryColor,
-                                          onTap: () async {
-                                            await context
-                                                .read<ComplexCubit>()
-                                                .createComplex(complexModel);
-                                            complexModel.floorCount =
-                                                floorsController.text;
-                                            complexModel.departmentCount =
-                                                apartmentController.text;
-                                            complexModel.buildId =
-                                                selectedId.toString();
-                                            orderModel.type_id = selectedId!;
-
-                                            // Input validation and navigation logic
-
-                                            Navigator.of(context)
-                                                .push(MaterialPageRoute(
-                                              builder: (context) =>
-                                                  FloorDetailsScreen(),
-                                            ));
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : MainButton(
-                                    text: local.next,
-                                    backGroundColor: primaryColor,
-                                    onTap: () {
-                                      orderModel.type_id = selectedId!;
-
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            FloorDetailsScreen(),
-                                      ));
-                                    },
-                                  )
-                            : Container(),
-                      )
-                    ],
-                  ),
+                                    ),
+                                  )),
+                            )
+                          : Container(),
+                    ),
+                  ],
                 ),
               ),
             ),

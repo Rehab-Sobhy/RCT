@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rct/constants/constants.dart';
@@ -44,8 +45,11 @@ class _FinalOrdersScreenState extends State<FinalOrdersScreen> {
           ),
           bottom: TabBar(
             tabs: [
-              Tab(
-                text: "الحاسبة والمشاريع",
+              Padding(
+                padding: const EdgeInsets.only(right: 0.0, left: 0),
+                child: Tab(
+                  text: "الحاسبة والمشاريع",
+                ),
               ),
               Tab(text: 'شراكة وتعاون'),
               Tab(text: "العروض العقارية"),
@@ -53,12 +57,13 @@ class _FinalOrdersScreenState extends State<FinalOrdersScreen> {
             ],
             labelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
             isScrollable: true,
+            dragStartBehavior: DragStartBehavior.start,
             unselectedLabelColor: Colors.grey,
             labelColor: primaryColor,
-            indicatorColor: primaryColor,
+            indicatorColor: primaryColor, tabAlignment: TabAlignment.start,
             unselectedLabelStyle:
                 TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-            padding: EdgeInsets.all(3),
+            // padding: EdgeInsets.all(3),
           ),
         ),
         body: const TabBarView(children: [

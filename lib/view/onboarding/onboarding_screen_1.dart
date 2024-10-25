@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rct/constants/constants.dart';
-import 'package:rct/view/auth/login_screen.dart';
+import 'package:rct/view/auth/sendotp.dart';
 
 class OnboardingScreen extends StatefulWidget {
   static String id = "OnboardingScreen";
@@ -23,6 +23,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     var local = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: Stack(
         children: [
           PageView(
@@ -34,22 +36,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             },
             children: [
               OnboardingPage(
-                imagePath: '$imagePath/onboarding-1.png',
+                imagePath: 'assets/images/unsplash_tHkJAMcO3QE (1).png',
                 title: local.page1Title,
                 description: local.page1Description,
               ),
               OnboardingPage(
-                imagePath: '$imagePath/onboarding-2.png',
+                imagePath: 'assets/images/unsplash_V5OEpF12pzw (1).png',
                 title: local.page2Title,
                 description: local.page2Description,
               ),
               OnboardingPage(
-                imagePath: '$imagePath/onboarding-1.png',
+                imagePath: 'assets/images/unsplash_V5OEpF12pzw (3).png',
                 title: local.page3Title,
                 description: local.page3Description,
               ),
               OnboardingPage(
-                imagePath: 'assets/images/Group 469314.png',
+                imagePath: "assets/images/onborading4.png",
                 title: local.page4Title,
                 description: local.page4Description,
               ),
@@ -83,10 +85,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // Next or Done button action
                     if (_currentPage == 3) {
                       // Navigate to the main app or home screen
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()));
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => SendOtp()));
                     } else {
                       _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
@@ -135,29 +135,38 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // height: MediaQuery.of(context).size.height * .6,
-      // width: double.infinity,
-      height: 200,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(imagePath),
-          fit: BoxFit.fill,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          ClipPath(
-            clipper: SinCosineWaveClipper(
-              horizontalPosition: HorizontalPosition.right,
-              verticalPosition: VerticalPosition.top,
+    return Stack(
+      children: [
+        // First Container for the Image
+        ClipPath(
+          child: Container(
+            height: MediaQuery.of(context).size.height *
+                0.65, // Adjust this as needed
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.fill, // Fit the image properly in the space
+              ),
             ),
+          ),
+        ),
+        // Second Container for Title and Description
+        Positioned(
+          bottom: 50, // Position it at the bottom
+          left: 0,
+          right: 0,
+          child: ClipPath(
+            // Optional: You can use a different clipper if desired
             child: Container(
-              color: Colors.white,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(120)),
+                // border: Border.all(
+                //     color: Colors.black, width: 1), // Add border here
+              ),
               padding: const EdgeInsets.all(20.0),
               height: MediaQuery.of(context).size.height *
-                  .35, // Fixed height for the text container
+                  0.40, // Adjusted height for the t   ext container
               width: double.infinity,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -165,7 +174,7 @@ class OnboardingPage extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
@@ -180,8 +189,8 @@ class OnboardingPage extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

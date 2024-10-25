@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rct/common%20copounents/app_bar_back_button.dart';
 import 'package:rct/constants/constants.dart';
@@ -15,12 +14,11 @@ class TermsAndConditionsScreen extends StatefulWidget {
 }
 
 class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
-  bool isLoading = false;
   final Crud crud = Crud();
   List<String?> termsConditions = [];
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchTermsAndConditions();
   }
@@ -31,57 +29,53 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
     return Scaffold(
       appBar: BackButtonAppBar(context),
       backgroundColor: Colors.white,
-      body: ModalProgressHUD(
-        inAsyncCall: isLoading,
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                local.termsConditions,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: constVerticalPadding),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: termsConditions.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
+      body: Center(
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Centralize horizontally
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              local.termsConditions,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center, // Center the text
+            ),
+            SizedBox(height: constVerticalPadding),
+            Expanded(
+              child: ListView.builder(
+                itemCount: termsConditions.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
                       child: Text(
                         termsConditions[index]!,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center, // Center the terms text
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Future fetchTermsAndConditions() async {
-    setState(() {
-      isLoading = true;
-    });
     try {
       final response = await crud.getRequest(linkTerms);
       for (var i = 0; i < response["data"].length; i++) {
         termsConditions.add(response["data"][i]["terms"]);
       }
-      print(termsConditions);
+      setState(() {}); // Refresh UI after data is fetched
     } catch (e) {
       print(e);
     }
-    // Fetch terms and conditions
-    setState(() {
-      isLoading = false;
-    });
   }
 }

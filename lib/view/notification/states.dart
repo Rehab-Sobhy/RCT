@@ -1,4 +1,4 @@
-import 'package:rct/view/RealEstate/notification/notify_model.dart';
+import 'package:rct/view/notification/notify_model.dart';
 
 abstract class NotificationState {}
 

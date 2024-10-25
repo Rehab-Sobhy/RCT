@@ -53,6 +53,8 @@ class OrderCubit extends Cubit<OrderState> {
           "user_id": "35",
           "floorcount": orderModel.floorcount,
           "main_type": orderModel.main_type,
+          "client_birth": orderModel.birthDate,
+          "identity_number": orderModel.nationalIdNumber,
         },
         images,
         headers: {
@@ -72,6 +74,7 @@ class OrderCubit extends Cubit<OrderState> {
         }
       } else {
         print("Error Response: $result");
+        print("Order Data: ${result['data']}");
         emit(OrderFailure(
             errMessage: "Failed to upload order. Please try again."));
       }
@@ -89,8 +92,6 @@ class OrderCubit extends Cubit<OrderState> {
         orderModel.status != null &&
         orderModel.agreement != null &&
         orderModel.number != null &&
-        orderModel.nationalidimage != null &&
-        orderModel.electronicimage != null &&
-        orderModel.landCheckImage != null;
+        orderModel.electronicimage != null;
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,17 +31,16 @@ class _PartnersScreenState extends State<PartnersScreen> {
       appBar: BackButtonAppBar(context),
       body: BlocConsumer<ParetenerCubit, PartenerStates>(
         listener: (context, state) {
-          // You can handle snackbar messages or navigation based on the state here
           if (state is PartenerFailed) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message!)),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text(state.message!)),
+            // );
           }
         },
         builder: (context, state) {
           if (state is PartenerLoading) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: Text(""),
             );
           } else if (state is PartenerSuccess) {
             final list = state.data;
@@ -59,18 +57,15 @@ class _PartnersScreenState extends State<PartnersScreen> {
                   Text(local.successPartners,
                       style:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
                   SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    height: 600.h,
                     child: GridView.builder(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        crossAxisSpacing: 10, // Adjust this value
-                        mainAxisSpacing: 10, // Adjust this v alue
-                        childAspectRatio: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 2.9 / 3,
                       ),
                       shrinkWrap: true,
                       padding: const EdgeInsets.all(15),
@@ -80,22 +75,24 @@ class _PartnersScreenState extends State<PartnersScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (conext) => PartenerDetailsScreen(
+                                  builder: (context) => PartenerDetailsScreen(
                                       id: list[index].id!)));
                         },
                         child: Card(
                           elevation: 5,
                           shadowColor: Colors.black,
                           child: Container(
-                            height: 250,
+                            height: 300,
                             decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 199, 195, 195),
-                                image: DecorationImage(
-                                    image: NetworkImage(
-                                      "${linkServerName}/${list[index].image!}",
-                                    ),
-                                    fit: BoxFit.fill),
-                                borderRadius: BorderRadius.circular(10)),
+                              color: const Color.fromARGB(255, 199, 195, 195),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  "${linkServerName}/${list[index].image!}",
+                                ),
+                                fit: BoxFit.fill,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
                       ),
@@ -104,7 +101,6 @@ class _PartnersScreenState extends State<PartnersScreen> {
                 ],
               ),
             );
-//       ),
           } else if (state is PartenerFailed) {
             return Center(
               child: Text('Failed to load data: ${state.message}'),

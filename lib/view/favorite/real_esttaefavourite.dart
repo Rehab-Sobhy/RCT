@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rct/common%20copounents/app_bar_back_button.dart';
 import 'package:rct/constants/linkapi.dart';
 import 'package:rct/view/favorite/favourite_details.dart';
 
@@ -39,9 +38,9 @@ class _RealFavoritesState extends State<RealFavorites> {
               final cubit = DataCubit.get(context);
 
               if (state is DataLoading) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: Container());
               } else if (state is DataError) {
-                return Center(child: Text('Error: ${state.message}'));
+                return Center(child: Text(' ${state.message}'));
               }
               return Expanded(
                 child: ListView.builder(
@@ -56,9 +55,9 @@ class _RealFavoritesState extends State<RealFavorites> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => FavoritesDetails(
-                                        description: "${house.description!}",
+                                        description: "${house.description}",
                                         image:
-                                            "${linkServerName}/${house.image1!}",
+                                            "${linkServerName}/${house.image1}",
                                         name: "${house.city_name!}",
                                       )));
                         },
@@ -75,7 +74,9 @@ class _RealFavoritesState extends State<RealFavorites> {
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: NetworkImage(
-                                          "${linkServerName}/${house.image1!}",
+                                          house.image1 != null
+                                              ? "${linkServerName}/${house.image1}"
+                                              : 'https://via.placeholder.com/150',
                                         ),
                                         fit: BoxFit.fill,
                                       ),
@@ -93,7 +94,9 @@ class _RealFavoritesState extends State<RealFavorites> {
                                       style: TextStyle(fontSize: 12),
                                     ),
                                     subtitle: Text(
-                                      '${house.price} ريال',
+                                      house.price == null
+                                          ? '${house.price} ريال'
+                                          : "",
                                       style: TextStyle(fontSize: 12),
                                     ),
                                     trailing: ElevatedButton(

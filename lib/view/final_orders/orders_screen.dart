@@ -14,7 +14,7 @@ class OrderListScreen extends StatelessWidget {
       body: BlocBuilder<OrdersListCubit, OrdersListState>(
         builder: (context, state) {
           if (state is OrdersListLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: Container());
           } else if (state is OrdersListFailure) {
             return Center(child: Text("'You Don't have orders'"));
           }

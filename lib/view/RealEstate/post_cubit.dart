@@ -42,6 +42,7 @@ class HouseCubit extends Cubit<HouseStates> {
           "agreement": houseModel.agreement,
           "number": houseModel.number,
           "cost": 100,
+          "client_phone": houseModel.phone,
         },
         images,
         headers: {},
@@ -54,7 +55,7 @@ class HouseCubit extends Cubit<HouseStates> {
         print(result);
         emit(HouseSuccesss());
 
-        //emit(HouseFaild(errMessage: result.entries.toString()));
+        // emit(HouseFaild(errMessage: result.entries.toString()));
       }
     } catch (e) {
       print(e);

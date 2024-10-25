@@ -1,8 +1,8 @@
 class PercentageData {
-  final int id;
-  final int firstPercentage;
-  final int secondPercentage;
-  final int lastPercentage;
+  final dynamic id;
+  final dynamic firstPercentage;
+  final dynamic secondPercentage;
+  final dynamic lastPercentage;
   final DateTime createdAt;
   final DateTime updatedAt;
 

@@ -51,7 +51,7 @@ class _RealstateOrdersState extends State<RealstateOrders> {
               },
               builder: (BuildContext context, Object? state) {
                 if (isloading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: Container());
                 } else if (data.isNotEmpty) {
                   return Expanded(
                     child: ListView.builder(

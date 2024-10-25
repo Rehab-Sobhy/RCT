@@ -108,28 +108,20 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       SizedBox(height: constVerticalPadding),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: grey,
-                        ),
-                        child: CustomDropDownList(
-                          list: itemNames,
-                          selectedValue: _selectedType,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              showButton = true;
-                              _selectedType = newValue!;
-                              selectedId = nameToDetails[newValue]!['id'];
-                              selectedPrice = nameToDetails[newValue]!['price'];
-                              // _selectedType = nameToDetails[newValue]!['name'];
-                              // print(_selectedType == local.residentialComplex);
-                            });
-                          },
-                          hint: local.chooseType,
-                        ),
+                      CustomDropDownList(
+                        list: itemNames,
+                        selectedValue: _selectedType,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            showButton = true;
+                            _selectedType = newValue!;
+                            selectedId = nameToDetails[newValue]!['id'];
+                            selectedPrice = nameToDetails[newValue]!['price'];
+                            // _selectedType = nameToDetails[newValue]!['name'];
+                            // print(_selectedType == local.residentialComplex);
+                          });
+                        },
+                        hint: local.chooseType,
                       ),
                       SizedBox(height: constVerticalPadding),
                       Center(

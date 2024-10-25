@@ -31,9 +31,9 @@ class _DesignsOrdersState extends State<DesignsOrders> {
           BlocConsumer<FinalOrdersCubit, FinalOrdersStates>(
             listener: (context, state) {
               if (state is DesignsFaild) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
-                );
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   SnackBar(content: Text(state.message)),
+                // );
                 print("Failed to load data: ${state.message}");
               } else if (state is DesignsSuccess) {
                 // Data is successfully loaded
@@ -43,7 +43,7 @@ class _DesignsOrdersState extends State<DesignsOrders> {
             builder: (context, state) {
               if (state is DesignsLoading) {
                 print("Loading data...");
-                return const Center(child: CircularProgressIndicator());
+                return Center(child: Container());
               } else if (state is DesignsSuccess) {
                 final data = state.data;
                 if (data.isNotEmpty) {
@@ -124,12 +124,12 @@ class _DesignsOrdersState extends State<DesignsOrders> {
                     ),
                   );
                 } else {
-                  print("No data available");
-                  return const Center(child: Text("No data available"));
+                  print("You Don't Have Orders");
+                  return const Center(child: Text("you Don't Have Orders"));
                 }
               } else {
                 print("Unhandled state: ${state.runtimeType}");
-                return const Center(child: Text("Something went wrong"));
+                return const Center(child: Text("you Don't Have Orders"));
               }
             },
           ),

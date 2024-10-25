@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class BuildTypesModel extends ChangeNotifier {
   String? name;
   String? price;
-  int? id;
+  dynamic? id;
 
   BuildTypesModel({
     this.name,

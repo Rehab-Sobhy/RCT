@@ -54,23 +54,15 @@ class _ChooseBuildingTypeState extends State<ChooseBuildingType> {
                 style: TextStyle(fontSize: 12),
               ),
               SizedBox(height: constVerticalPadding + 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: grey,
-                ),
-                child: CustomDropDownList(
-                  list: itemNames,
-                  selectedValue: _selectedType,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedType = newValue!;
-                    });
-                  },
-                  hint: local.chooseType,
-                ),
+              CustomDropDownList(
+                list: itemNames,
+                selectedValue: _selectedType,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedType = newValue!;
+                  });
+                },
+                hint: local.chooseType,
               ),
               SizedBox(height: 50),
               Center(

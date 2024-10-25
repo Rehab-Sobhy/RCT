@@ -32,8 +32,6 @@ class DataError extends DataState {
   List<Object> get props => [message];
 }
 
-class SearchSuccss extends DataState {}
-
 class FilterSuccessState extends DataState {
   final List<Modelget> data;
 

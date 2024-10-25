@@ -73,6 +73,7 @@ class _FilterScreenState extends State<FilterScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
@@ -92,103 +93,114 @@ class _FilterScreenState extends State<FilterScreen> {
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 30),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 30),
 
-            Text(
-              local.city,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+              Text(
+                local.city,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-            DropdownButtonFormField<String>(
-              dropdownColor: Colors.white,
-              value: selectedCity,
-              decoration: InputDecoration(
+              DropdownButtonFormField<String>(
+                dropdownColor: Colors.white,
+                value: selectedCity,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(10),
+                    border: const OutlineInputBorder(),
+                    hintText: local.chooseCity,
+                    hintStyle: TextStyle(color: Colors.grey, fontSize: 12)),
+                items: _cities.map((String city) {
+                  return DropdownMenuItem<String>(
+                    value: city,
+                    child: Text(
+                      city,
+                      style: TextStyle(fontSize: 12, color: Colors.black),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedCity = newValue;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              Text(
+                local.district,
+                style:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: distrectnameController,
+                decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(10),
+                  hintText: local.enterDistrict,
+                  hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
                   border: const OutlineInputBorder(),
-                  hintText: local.chooseCity,
-                  hintStyle: TextStyle(color: Colors.grey, fontSize: 12)),
-              items: _cities.map((String city) {
-                return DropdownMenuItem<String>(
-                  value: city,
-                  child: Text(
-                    city,
-                    style: TextStyle(fontSize: 12, color: Colors.black),
-                  ),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedCity = newValue;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            Text(
-              local.district,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: distrectnameController,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(10),
-                hintText: local.enterDistrict,
-                hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
-                border: const OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            // Slider
-            Text(local.price),
-            Slider(
-              value: initialPrice,
-              min: 50,
-              divisions: 1000,
-              max: 1000000,
-              label: initialPrice.round().toString(),
-              onChanged: (double value) {
-                setState(() {
-                  initialPrice = value;
-                });
-              },
-            ),
-            const SizedBox(height: 32),
-            // Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                MainButton(
+              const SizedBox(height: 16),
+              // Slider
+              Text(local.price),
+              Slider(
+                value: initialPrice,
+                min: 50,
+                divisions: 1000,
+                max: 1000000,
+                label: initialPrice.round().toString(),
+                onChanged: (double value) {
+                  setState(() {
+                    initialPrice = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 32),
+              // Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  MainButton(
                     width: 150,
                     text: local.refilter,
                     backGroundColor: primaryColor,
                     onTap: () {
+                      // Debugging the filter call
+                      print("Selected City: $selectedCity");
+                      print("District Name: ${distrectnameController.text}");
+
+                      // Trigger filtering
                       DataCubit.get(context).FilteredData(
                         city: selectedCity ?? '',
                         district: distrectnameController.text,
                       );
+
+                      // Navigate back (ensure this is correct behavior)
                       Navigator.pop(context);
-                    }),
-                MainButton(
-                    width: 150,
-                    text: local.cancel,
-                    backGroundColor: grey,
-                    onTap: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const FinalOffers(url: linkHouses)));
-                    }),
-              ],
-            ),
-          ],
+                    },
+                  ),
+                  MainButton(
+                      width: 150,
+                      text: local.cancel,
+                      backGroundColor: grey,
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const FinalOffers(url: linkHouses)));
+                      }),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

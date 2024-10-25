@@ -55,7 +55,7 @@ class _RowOrdersScreenState extends State<RowOrdersScreen> {
               builder: (BuildContext context, Object? state) {
                 if (isloading) {
                   // print("Loading data...");
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: Container());
                 } else if (data.isNotEmpty) {
                   // print("Building list with ${data.length} items...");
                   return Expanded(
@@ -83,7 +83,8 @@ class _RowOrdersScreenState extends State<RowOrdersScreen> {
                                     Text(
                                         data[index].type == "raw_lands"
                                             ? "${"أرض خام"}"
-                                            : data[index].type == "oldbuildings"
+                                            : data[index].type ==
+                                                    "old_buildings"
                                                 ? "مباني قديمة"
                                                 : "مخططات",
                                         style: const TextStyle(fontSize: 12)),
