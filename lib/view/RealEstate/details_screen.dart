@@ -7,6 +7,7 @@ import 'package:rct/view/RealEstate/modelget.dart';
 import 'package:rct/view/RealEstate/real_estate_cubit.dart';
 import 'package:rct/view/RealEstate/states.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rct/view/home_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -132,7 +133,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             icon: Icon(Icons.arrow_back_ios_new_sharp,
                                 color: Colors.black),
                             onPressed: () {
-                              Navigator.pop(context);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomeScreen()));
                             },
                           ),
                         ),

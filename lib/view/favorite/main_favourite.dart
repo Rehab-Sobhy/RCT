@@ -121,6 +121,9 @@ class _MainFavouritesState extends State<MainFavourites> {
             unselectedLabelColor: Colors.grey,
             labelColor: primaryColor,
             indicatorColor: primaryColor,
+            indicatorSize: TabBarIndicatorSize
+                .tab, // Stretch the indicator to the full width of the tab
+
             unselectedLabelStyle:
                 const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
             indicatorPadding: const EdgeInsets.symmetric(

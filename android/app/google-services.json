@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:288573191873:android:86b624cff735871ba2c640",
+        "mobilesdk_app_id": "1:288573191873:android:63b384c6bad6f926a2c640",
         "android_client_info": {
-          "package_name": "com.example.rct_app"
+          "package_name": "com.futureapp.rct"
         }
       },
       "oauth_client": [],

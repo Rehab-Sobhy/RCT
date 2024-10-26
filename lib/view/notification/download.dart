@@ -30,97 +30,71 @@ class _DownloadScreenState extends State<DownloadScreen> {
   File? identity;
   bool isLocked = false;
   bool isLoading = false;
-  bool _isDownloading = false;
-  String _downloadProgress = "0%";
   bool _isChecked = false; // Checkbox state
 
-  // Function to download file
+  int downloadCount = 0; // Counter for downloads
+  double downloadProgress = 0.0; // Progress variable
 
-  Future<void> _downloadFile(String url, String fileName) async {
-    setState(() {
-      _isDownloading = true;
-    });
+  Future<void> requestStoragePermission() async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+  }
 
+  dynamic filePath;
+  Future<void> downloadFile(String url, {String? fileName}) async {
     try {
-      if (Platform.isAndroid) {
-        var status = await Permission.storage.request();
-        if (!status.isGranted) {
-          throw Exception('Storage permission is not granted.');
-        }
-      }
+      // Request storage permissions
+      await requestStoragePermission();
 
-      // تحديد المسار إلى مجلد التنزيلات على Android
-      String savePath;
+      // Set up the path to save the file in the Downloads directory
+      Directory? downloadsDirectory;
 
       if (Platform.isAndroid) {
-        // الحصول على مسار مجلد التنزيلات
-        Directory? downloadsDir = Directory('/storage/emulated/0/Download');
-        savePath = "${downloadsDir.path}/$fileName";
-      } else if (Platform.isIOS) {
-        Directory docsDir = await getApplicationDocumentsDirectory();
-        savePath = "${docsDir.path}/$fileName";
+        downloadsDirectory = Directory('/storage/emulated/0/Download');
       } else {
-        throw Exception('Unsupported platform');
+        downloadsDirectory = await getDownloadsDirectory();
       }
 
-      print("Saving file to: $savePath");
+      if (downloadsDirectory == null) {
+        throw Exception("Downloads directory is not accessible.");
+      }
 
+      // Use the original file name if not provided
+      String finalFileName = fileName ?? url.split('/').last;
+      filePath = '${downloadsDirectory.path}/$finalFileName';
+
+      // Start downloading
       Dio dio = Dio();
-
       await dio.download(
         url,
-        savePath,
+        filePath,
         onReceiveProgress: (received, total) {
           if (total != -1) {
             setState(() {
-              _downloadProgress =
-                  "${(received / total * 100).toStringAsFixed(0)}%";
+              downloadProgress = received / total; // Update progress
             });
           }
         },
       );
 
-      setState(() {
-        _isDownloading = false;
-      });
+      print("File downloaded successfully to $filePath");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("File saved successfully at $savePath"),
-          backgroundColor: Colors.green,
-        ),
-      );
+      // Increment the download count
+      setState(() {
+        downloadCount++;
+        downloadProgress = 0.0; // Reset progress after download
+      });
     } catch (e) {
+      print("Error downloading file: $e");
       setState(() {
-        _isDownloading = false;
+        downloadProgress = 0.0; // Reset progress on error
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Download failed: $e"),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
 
   String? fileName;
-
-  // Future<void> _downloadFileee(String fullUrl) async {
-  //   // Generate a unique filename using  the current timestamp
-  //   String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-  //   fileName = "RCT_$timestamp.pdf";
-
-  //   // Your download logic here
-  //   // For example:
-  //   final response = await Dio().download(fullUrl, '/path/to/save/$fileName');
-
-  //   if (response.statusCode == 200) {
-  //     print('File downloaded: $fileName');
-  //   } else {
-  //     print('Download failed: ${response.statusCode}');
-  //   }
-  // }
 
   bool lol = false;
 
@@ -152,7 +126,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                       child: Container(
                         height: 150,
                         child: InkWell(
-                          onTap: () {
+                          onTap: () async {
                             final String? fileUrl = product.file;
                             const String baseUrl =
                                 "https://rctapp.com"; // Replace with your base URL
@@ -166,7 +140,17 @@ class _DownloadScreenState extends State<DownloadScreen> {
                             if (fullUrl != null &&
                                 Uri.tryParse(fullUrl)?.hasAbsolutePath ==
                                     true) {
-                              _downloadFile(fullUrl, " RCT.pdf");
+                              await downloadFile(
+                                fileUrl!,
+                                // URL of the file
+                              );
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    backgroundColor: Colors.green,
+                                    content: Text(
+                                        "File downloaded successfully to $filePath")),
+                              );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -175,10 +159,22 @@ class _DownloadScreenState extends State<DownloadScreen> {
                               );
                             }
                           },
-                          child: _isDownloading
+                          child: downloadProgress > 0
                               ? Center(
-                                  child:
-                                      Text('Downloading... $_downloadProgress'))
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircularProgressIndicator(
+                                        value: downloadProgress,
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        "${(downloadProgress * 100).toStringAsFixed(0)}%",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
+                                )
                               : Image.network(
                                   "https://th.bing.com/th/id/OIP.VUEgQLuoZq5Dr_xhkOpi2gHaHa?rs=1&pid=ImgDetMain",
                                   fit: BoxFit.fill,
@@ -445,7 +441,11 @@ class _DownloadScreenState extends State<DownloadScreen> {
                     content: ListTile(
                       titleAlignment: ListTileTitleAlignment.center,
                       // title: Text(local.requestSentSuccessfully),
-                      title: Text("تم إرسال ردك بنجاح شكرا لك"),
+
+                      title: Text(
+                        "تم إرسال ردك بنجاح شكرا لك",
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                     ontap: () {
                       // Close the current dialog

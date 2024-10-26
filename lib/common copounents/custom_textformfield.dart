@@ -19,7 +19,7 @@ class TextFormFieldCustom extends StatelessWidget {
   double length;
   String? Text;
   TextInputType? inputType;
-
+  dynamic numberofdigits;
   TextFormFieldCustom({
     super.key,
     required this.context,
@@ -29,6 +29,7 @@ class TextFormFieldCustom extends StatelessWidget {
     // this.validatorErrorMessage,
     this.border,
     this.inputType,
+    this.numberofdigits,
     this.Text,
     this.enabled,
     this.value,
@@ -43,6 +44,7 @@ class TextFormFieldCustom extends StatelessWidget {
     var local = AppLocalizations.of(context)!;
 
     return TextFormField(
+        maxLength: numberofdigits,
         controller: value == null ? controller : null,
         initialValue: value,
         validator: (value) {
@@ -56,11 +58,8 @@ class TextFormFieldCustom extends StatelessWidget {
         keyboardType: inputType,
         decoration: InputDecoration(
           suffixText: Text,
-          suffixStyle: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold), // Style for the suffix
+          suffixStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
 
-          // contentPadding: length == 0 ? null : EdgeInsets.only(bottom: length),
           hintText: labelText,
           floatingLabelAlignment: FloatingLabelAlignment.start,
           fillColor: grey.withOpacity(0.5),

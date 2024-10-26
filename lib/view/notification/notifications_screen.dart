@@ -226,14 +226,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                           ElevatedButton(
                                                             onPressed:
                                                                 () async {
-                                                              setState(() {
-                                                                showButton =
-                                                                    false;
-                                                              });
-                                                              await _setButtonPressed(
-                                                                  notification
-                                                                      .id
-                                                                      .toString());
                                                               await context
                                                                   .read<
                                                                       NotificationCubit>()
@@ -248,6 +240,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                                         .data
                                                                         .id,
                                                                   );
+
+                                                              setState(() {
+                                                                flag = true;
+                                                                showButton =
+                                                                    false;
+                                                              });
+
+                                                              await _setButtonPressed(
+                                                                  notification
+                                                                      .id
+                                                                      .toString());
                                                             },
                                                             style:
                                                                 ElevatedButton

@@ -42,7 +42,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCnaAjrfH8dRamqpHQwuSOJeeUACVGkLPE',
-    appId: '1:288573191873:android:86b624cff735871ba2c640',
+    appId: '1:288573191873:android:63b384c6bad6f926a2c640',
     messagingSenderId: '288573191873',
     projectId: 'rct-app-88887',
     storageBucket: 'rct-app-88887.appspot.com',
@@ -50,11 +50,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyC0-YdEmMH5GwSWB4EFP02rbHDahLeaeo0',
-    appId: '1:288573191873:ios:1c41c263b8287e9ea2c640',
+    appId: '1:288573191873:ios:1416bc310077e3e8a2c640',
     messagingSenderId: '288573191873',
     projectId: 'rct-app-88887',
     storageBucket: 'rct-app-88887.appspot.com',
-    iosBundleId: 'com.example.rctApp',
+    iosBundleId: 'com.futureapp.rct',
   );
 
   static const FirebaseOptions web = FirebaseOptions(

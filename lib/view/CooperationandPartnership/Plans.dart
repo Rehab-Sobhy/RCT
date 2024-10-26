@@ -105,7 +105,7 @@ class _PlansScreenState extends State<PlansScreen> {
     }
 
     if (nationalIdControlller.text.length < 10 && isNationalIdSelected) {
-      showSnackBar(context, "يجب ألا يكون الرقم أقل من 10", redColor);
+      showSnackBar(context, "يجب ألا يكون رقم الهوية أقل من 10", redColor);
       return;
     }
     if (birtController.text.isEmpty && isNationalIdSelected) {
@@ -194,8 +194,12 @@ class _PlansScreenState extends State<PlansScreen> {
                   ),
                   content: ListTile(
                     titleAlignment: ListTileTitleAlignment.center,
-                    title: Text(local.requestSentSuccessfully),
-                    subtitle: Text(local.requestWillBeReviewed),
+                    title: Text(
+                      local.requestSentSuccessfully,
+                      textAlign: TextAlign.center,
+                    ),
+                    subtitle: Text(local.requestWillBeReviewed,
+                        textAlign: TextAlign.center),
                   ),
                   ontap: () => Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -260,6 +264,7 @@ class _PlansScreenState extends State<PlansScreen> {
                       SizedBox(height: constVerticalPadding),
                       // Text field for "رقم الهوية"
                       TextFormFieldCustom(
+                        numberofdigits: 10,
                         inputType: TextInputType.number,
                         context: context,
                         labelText: "", // Optional field

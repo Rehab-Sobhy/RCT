@@ -33,7 +33,6 @@ import 'package:rct/view/CooperationandPartnership/cooperativeMdel.dart';
 import 'package:rct/view/CooperationandPartnership/cooperative_cubit.dart';
 import 'package:rct/view/RealEstate/bloc_helper.dart';
 import 'package:rct/view/RealEstate/modelget.dart';
-import 'package:rct/view/home_screen.dart';
 import 'package:rct/view/notification/notification-detaails2.dart';
 import 'package:rct/view/notification/notifycubit.dart';
 import 'package:rct/view/final_orders/final_orders_cubit.dart';
@@ -57,7 +56,7 @@ void main() async {
 
   secureStorage = const FlutterSecureStorage();
   AwesomeNotifications().initialize(
-    "resource://drawable/test", // Correct reference to drawable resource (without .png)
+    "resource://drawable/test",
     [
       NotificationChannel(
         channelKey: 'local notification key',
