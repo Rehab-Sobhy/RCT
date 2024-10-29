@@ -85,7 +85,7 @@ class _FinalOffersState extends State<FinalOffers> {
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 20),
-                          labelText: local.search,
+                          labelText: "",
                           floatingLabelAlignment: FloatingLabelAlignment.start,
                           fillColor: Colors.grey[200],
                           filled: true,

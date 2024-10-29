@@ -601,7 +601,6 @@ class _PlansScreenState extends State<PlansScreen> {
                       hintText: "",
                       textt: local.price,
                       controller: priceController,
-                      keyboardType: TextInputType.number,
                       validator: (value) {},
                     ),
                     SizedBox(height: constVerticalPadding),

@@ -508,7 +508,6 @@ class _Oldbuilding_ScreenState extends State<Oldbuilding_Screen> {
                       hintText: "",
                       textt: local.price,
                       controller: priceController,
-                      keyboardType: TextInputType.number,
                       validator: (value) {},
                     ),
                     SizedBox(height: constVerticalPadding),

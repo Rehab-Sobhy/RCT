@@ -1,9 +1,7 @@
-import 'package:custom_clippers/custom_clippers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rct/constants/constants.dart';
-import 'package:rct/view/auth/sendotp.dart';
 
 class OnboardingScreen extends StatefulWidget {
   static String id = "OnboardingScreen";
@@ -85,8 +83,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // Next or Done button action
                     if (_currentPage == 3) {
                       // Navigate to the main app or home screen
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => SendOtp()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
+                      // Navigator.pushReplacement(context,
+                      //     MaterialPageRoute(builder: (context) => SendOtp()));
                     } else {
                       _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),

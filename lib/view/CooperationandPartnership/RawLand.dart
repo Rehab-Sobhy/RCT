@@ -515,7 +515,6 @@ class _Raw_ScreenState extends State<Raw_Screen> {
                       textt: local.price,
                       controller: priceController,
                       validator: (value) {},
-                      keyboardType: TextInputType.number,
                     ),
                     SizedBox(height: 15),
                     Text(

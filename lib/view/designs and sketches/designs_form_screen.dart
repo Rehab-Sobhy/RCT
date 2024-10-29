@@ -77,8 +77,12 @@ class _DesignsFormState extends State<DesignsForm> {
                   ),
                   content: ListTile(
                     titleAlignment: ListTileTitleAlignment.center,
-                    title: Text(local.requestSentSuccessfully),
-                    subtitle: Text(local.requestWillBeReviewed),
+                    title: Text(
+                      local.requestSentSuccessfully,
+                      textAlign: TextAlign.center,
+                    ),
+                    subtitle: Text(local.requestWillBeReviewed,
+                        textAlign: TextAlign.center),
                   ),
                   ontap: () => Navigator.pushAndRemoveUntil(
                     context,
