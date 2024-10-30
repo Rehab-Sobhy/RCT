@@ -108,6 +108,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  bool loged = false;
+  Future<bool> checkLoginStatus() async {
+    loged = await checkLoginStatus();
+    return loged;
+  }
+
   @override
   Widget build(BuildContext context) {
     OrderModel orderModel = Provider.of<OrderModel>(context, listen: false);
@@ -145,37 +151,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 MaterialPageRoute(builder: (context) => NotificationScreen()),
               );
             },
-            child: Stack(
-              children: [
-                Icon(
-                  number == 0 || number == "" || number == null
-                      ? Icons.notifications_none
-                      : Icons.notifications,
-                  color: whiteBackGround,
-                ),
-                if (number != 0 && number != "" && number != null)
-                  Positioned(
-                    right: 2,
-                    top: 1,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
+            child: loged
+                ? Stack(
+                    children: [
+                      Icon(
+                        number == 0 || number == "" || number == null
+                            ? Icons.notifications_none
+                            : Icons.notifications,
+                        color: whiteBackGround,
                       ),
-                      constraints: const BoxConstraints(minWidth: 6),
-                      child: Text(
-                        "$number", // Ensure the number is a string
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 4, // Adjusted the font size for visibility
+                      if (number != 0 && number != "" && number != null)
+                        Positioned(
+                          right: 2,
+                          top: 1,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            constraints: const BoxConstraints(minWidth: 6),
+                            child: Text(
+                              "$number", // Ensure the number is a string
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize:
+                                    4, // Adjusted the font size for visibility
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+                    ],
+                  )
+                : Container(),
           ),
           SizedBox(width: 10.w),
         ],
@@ -238,34 +247,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            ListTile(
-              title: Text(
-                local.orders,
-                style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold),
-              ),
-              leading: SvgPicture.asset("$iconsPath/1.svg"),
-              // titleTextStyle: Theme.of(context).textTheme.titleMedium,
-              onTap: () {
-                print("inhome$loginToken");
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const FinalOrdersScreen()));
-              },
-            ),
-            const Divider(),
-            ListTile(
-              title: Text(
-                local.favorites,
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              ),
-              leading: SvgPicture.asset("$iconsPath/2.svg"),
-              // titleTextStyle: Theme.of(context).textTheme.titleMedium,
-              onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => MainFavourites())),
-            ),
-            const Divider(),
+            loged
+                ? Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          local.orders,
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        leading: SvgPicture.asset("$iconsPath/1.svg"),
+                        // titleTextStyle: Theme.of(context).textTheme.titleMedium,
+                        onTap: () {
+                          print("inhome$loginToken");
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const FinalOrdersScreen()));
+                        },
+                      ),
+                      const Divider(),
+                      ListTile(
+                        title: Text(
+                          local.favorites,
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        leading: SvgPicture.asset("$iconsPath/2.svg"),
+                        // titleTextStyle: Theme.of(context).textTheme.titleMedium,
+                        onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => MainFavourites())),
+                      ),
+                      const Divider(),
+                      ListTile(
+                        title: Text(
+                          local.aboutUs,
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        leading: SvgPicture.asset("$iconsPath/3.svg"),
+                        // titleTextStyle: Theme.of(context).textTheme.titleMedium,
+                        onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => AboutUsScreen())),
+                      ),
+                    ],
+                  )
+                : Container(),
             ListTile(
               title: Text(
                 local.aboutUs,
@@ -352,24 +381,32 @@ class _HomeScreenState extends State<HomeScreen> {
             //         builder: (context) => const LanguageScreen()));
             //   },
             // ),
-            const Divider(),
-            ListTile(
-              title: Text(
-                local.logout,
-                style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold),
-              ),
-              leading: SvgPicture.asset("$iconsPath/Vector-4.svg"),
-              // titleTextStyle: Theme.of(context).textTheme.titleMedium,
-              onTap: () async {
-                await secureStorage.deleteAll();
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => SendOtp()));
-                // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-              },
-            ),
+
+            loged
+                ? Column(
+                    children: [
+                      const Divider(),
+                      ListTile(
+                        title: Text(
+                          local.logout,
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        leading: SvgPicture.asset("$iconsPath/Vector-4.svg"),
+                        // titleTextStyle: Theme.of(context).textTheme.titleMedium,
+                        onTap: () async {
+                          await secureStorage.deleteAll();
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (context) => SendOtp()));
+                          // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                        },
+                      ),
+                    ],
+                  )
+                : Container(),
             const Divider(),
           ],
         ),
