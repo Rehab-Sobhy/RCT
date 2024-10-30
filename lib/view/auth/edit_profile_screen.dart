@@ -142,7 +142,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double higt = MediaQuery.of(context).size.height * .05;
+    double higt = MediaQuery.of(context).size.height * .04;
     var local = AppLocalizations.of(context)!;
 
     return Scaffold(

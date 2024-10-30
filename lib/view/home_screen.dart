@@ -28,7 +28,6 @@ import 'package:rct/view/designs%20and%20sketches/designs_and_screen.dart';
 import 'package:rct/view/auth/edit_profile_screen.dart';
 import 'package:rct/view/final_orders/final_orders_cubit.dart';
 import 'package:rct/view/final_orders/final_orders_states.dart';
-import 'package:rct/view/language_screen.dart';
 import 'package:rct/view/notification/notifications_screen.dart';
 import 'package:rct/view/partener_success/partners_screen.dart';
 import 'package:rct/view/privacy_screen.dart';
@@ -56,6 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<FinalOrdersCubit>().Users();
     _loadNameandiamge();
     getnotifyNumber();
+    checkLoginStatus();
+    _checkLoginStatus();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       setState(() {
         int notificationId = Random().nextInt(1000000) + 10;
@@ -109,9 +110,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool loged = false;
-  Future<bool> checkLoginStatus() async {
-    loged = await checkLoginStatus();
-    return loged;
+  Future<void> _checkLoginStatus() async {
+    bool isLoggedIn = await checkLoginStatus();
+    print(",,,,,,,,,, $isLoggedIn");
+    setState(() {
+      loged = isLoggedIn;
+    });
   }
 
   @override
@@ -247,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            loged
+            loged == true
                 ? Column(
                     children: [
                       ListTile(
@@ -279,22 +283,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             MaterialPageRoute(
                                 builder: (context) => MainFavourites())),
                       ),
-                      const Divider(),
-                      ListTile(
-                        title: Text(
-                          local.aboutUs,
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                        leading: SvgPicture.asset("$iconsPath/3.svg"),
-                        // titleTextStyle: Theme.of(context).textTheme.titleMedium,
-                        onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => AboutUsScreen())),
-                      ),
                     ],
                   )
                 : Container(),
+            const Divider(),
             ListTile(
               title: Text(
                 local.aboutUs,

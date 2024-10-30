@@ -108,15 +108,16 @@ class _FloorDetailsScreenState extends State<FloorDetailsScreen> {
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height / 2.5,
                       child: orderModel.floorDetails.isEmpty
-                          ? ListView.builder(
-                              itemCount: 3,
-                              itemBuilder: (context, index) {
-                                String key = complexMap.keys.elementAt(index);
-                                String value = complexMap[key]!;
-                                return FloorDetails(
-                                    text: key, number: double.tryParse(value));
-                              },
-                            )
+                          ? Container()
+                          //  ListView.builder(
+                          //     itemCount: 3,
+                          //     itemBuilder: (context, index) {
+                          //       String key = complexMap.keys.elementAt(index);
+                          //       String value = complexMap[key]!;
+                          //       return FloorDetails(
+                          //           text: key, number: double.tryParse(value));
+                          //     },
+                          //   )
                           : ListView.builder(
                               itemCount: orderModel.floorDetails.length,
                               itemBuilder: (context, index) {
