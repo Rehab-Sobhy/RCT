@@ -12,6 +12,7 @@ import 'package:rct/common%20copounents/pop_up.dart';
 import 'package:rct/constants/constants.dart';
 import 'package:rct/constants/linkapi.dart';
 import 'package:rct/model/order_model.dart';
+import 'package:rct/view-model/functions/check_token.dart';
 import 'package:rct/view/auth/sendotp.dart';
 import 'package:rct/view/calculations%20and%20projects/measurment_of%20_villa.dart';
 import 'package:rct/view/favorite/main_favourite.dart';
@@ -67,7 +68,6 @@ class _HomeScreenState extends State<HomeScreen> {
             displayOnForeground: true,
             title: message.notification!.title,
             body: message.notification!.body,
-         
           ),
         );
       });
@@ -337,21 +337,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(
-                Icons.language,
-              ),
-              title: Text(
-                local.language,
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              ),
-              // titleTextStyle: Theme.of(context).textTheme.titleMedium,
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const LanguageScreen()));
-              },
-            ),
+            // const Divider(),
+            // ListTile(
+            //   leading: const Icon(
+            //     Icons.language,
+            //   ),
+            //   title: Text(
+            //     local.language,
+            //     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            //   ),
+            //   // titleTextStyle: Theme.of(context).textTheme.titleMedium,
+            //   onTap: () {
+            //     Navigator.of(context).push(MaterialPageRoute(
+            //         builder: (context) => const LanguageScreen()));
+            //   },
+            // ),
             const Divider(),
             ListTile(
               title: Text(
@@ -409,12 +409,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ListView(
                         children: [
                           InkWell(
-                            onTap: () => Navigator.of(context).push(
+                            onTap: () async {
+                              // If logged in, navigate to the ChooseBuildingType screen
+                              Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ChooseBuildingType())),
+                                  builder: (context) =>
+                                      const ChooseBuildingType(),
+                                ),
+                              );
+                            },
                             child: SizedBox(
-                              height: hight,
+                              height:
+                                  hight, // Ensure 'height' is correctly defined
                               child: Card(
                                 color: whiteBackGround,
                                 margin: const EdgeInsets.all(10),
@@ -425,7 +431,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: ListTile(
                                     title: Text(
                                       local.cooperationAndPartnership,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -474,6 +480,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
+
+// Replace with actual logic to check if the user is logged in
+
                           SizedBox(
                             height: hight,
                             child: Card(
@@ -484,166 +493,338 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               child: Center(
                                 child: ListTile(
-                                  title: Text(
-                                    local.calculatorProjects,
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  leading: Image.asset(
-                                    "$iconsPath/projectsAndCalc-icon.png",
-                                    width: 50.w,
-                                  ),
-                                  trailing: const Icon(
-                                      Icons.arrow_forward_ios_rounded),
-                                  onTap: () => showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        contentPadding: EdgeInsets.all(20),
-                                        backgroundColor: Colors.white,
-                                        title: const Center(
-                                          child: Text(
-                                            "الرجاء اختيار آلية البناء",
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        content: Container(
-                                          width: double.infinity,
-                                          height: 90,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Container(
-                                                width: 100,
-                                                child: MainButton(
-                                                  text: "مجمع سكني",
-                                                  textColor: Colors.white,
-                                                  backGroundColor: primaryColor,
-                                                  onTap: () {
-                                                    // Close the first dialog before showing the next one
-                                                    Navigator.of(context).pop();
-
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return ShowPopUp(
-                                                          ontap: () async {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          title: const Text(
-                                                            "يرجى التواصل مع فريق RCT لإتمام طلبك.",
-                                                            style: TextStyle(
-                                                                fontSize: 10),
-                                                          ),
-                                                          content: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              const Text(
-                                                                "للتواصل عبر واتساب",
+                                    title: Text(
+                                      local.calculatorProjects,
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    leading: Image.asset(
+                                      "$iconsPath/projectsAndCalc-icon.png",
+                                      width: 50,
+                                    ),
+                                    trailing: const Icon(
+                                        Icons.arrow_forward_ios_rounded),
+                                    onTap: () async {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            contentPadding: EdgeInsets.all(20),
+                                            backgroundColor: Colors.white,
+                                            title: const Center(
+                                              child: Text(
+                                                "الرجاء اختيار آلية البناء",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            content: Container(
+                                              width: double.infinity,
+                                              height: 90,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Container(
+                                                    width: 100,
+                                                    child: MainButton(
+                                                      text: "مجمع سكني",
+                                                      textColor: Colors.white,
+                                                      backGroundColor:
+                                                          primaryColor,
+                                                      onTap: () {
+                                                        Navigator.of(context)
+                                                            .pop(); // Close first dialog
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return ShowPopUp(
+                                                              ontap: () async {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              title: const Text(
+                                                                "يرجى التواصل مع فريق RCT لإتمام طلبك.",
                                                                 style: TextStyle(
                                                                     fontSize:
                                                                         10),
                                                               ),
-                                                              const SizedBox(
-                                                                  width: 20),
-                                                              InkWell(
-                                                                onTap:
-                                                                    () async {
-                                                                  await launch(
-                                                                      whatsapUrl
-                                                                          .toString());
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 25,
-                                                                  decoration:
-                                                                      const BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
+                                                              content: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  const Text(
+                                                                    "للتواصل عبر واتساب",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            10),
                                                                   ),
-                                                                  child: Image
-                                                                      .asset(
-                                                                    "assets/images/watsap.png",
-                                                                    fit: BoxFit
-                                                                        .fill,
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          20),
+                                                                  InkWell(
+                                                                    onTap:
+                                                                        () async {
+                                                                      await launchUrlString(
+                                                                          whatsapUrl
+                                                                              .toString());
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      height:
+                                                                          25,
+                                                                      child: Image
+                                                                          .asset(
+                                                                        "assets/images/watsap.png",
+                                                                        fit: BoxFit
+                                                                            .fill,
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
+                                                            );
+                                                          },
                                                         );
                                                       },
-                                                    );
-                                                  },
-                                                ),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    width: 60,
+                                                    child: MainButton(
+                                                        text: "ڤلل",
+                                                        textColor: Colors.white,
+                                                        backGroundColor:
+                                                            primaryColor,
+                                                        onTap: () async {
+                                                          String loginMessage =
+                                                              "يرجى تسجيل الدخول ."; // Custom message
+                                                          bool isLoggedIn =
+                                                              await checkLoginStatus(); // Check if the user is logged in
+
+                                                          if (isLoggedIn) {
+                                                            // If logged in, navigate to the ChooseBuildingType screen
+                                                            orderModel
+                                                                    .main_type =
+                                                                "ڤلل";
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        const MeasurmentOfVilla(),
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            // Show dialog if the user is not logged in
+                                                            showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return AlertDialog(
+                                                                    title: Text(
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      "تنبيه",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                    content:
+                                                                        Text(
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      loginMessage,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color: const Color
+                                                                              .fromARGB(
+                                                                              255,
+                                                                              109,
+                                                                              106,
+                                                                              106)),
+                                                                    ), // Display the login message
+                                                                    actions: [
+                                                                      Row(
+                                                                        children: [
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.of(context).pop(); // Close the dialog
+                                                                            },
+                                                                            child:
+                                                                                const Text(
+                                                                              "إلغاء",
+                                                                              style: TextStyle(fontSize: 12, color: Colors.black),
+                                                                            ),
+                                                                          ),
+                                                                          Spacer(),
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.of(context).pop(); // Close the dialog
+                                                                              // Navigate to the login screen
+                                                                              Navigator.pushReplacement(
+                                                                                context,
+                                                                                MaterialPageRoute(builder: (context) => SendOtp()), // Replace with your actual login screen
+                                                                              );
+                                                                            },
+                                                                            child:
+                                                                                const Text(
+                                                                              "تسجيل الدخول",
+                                                                              style: TextStyle(fontSize: 12, color: Colors.black),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                });
+                                                          }
+                                                        }),
+                                                  ),
+                                                  Container(
+                                                    width: 60,
+                                                    child: MainButton(
+                                                        text: "عمائر",
+                                                        textColor: Colors.white,
+                                                        backGroundColor:
+                                                            primaryColor,
+                                                        onTap: () async {
+                                                          String loginMessage =
+                                                              "يرجى تسجيل الدخول ."; // Custom message
+                                                          bool isLoggedIn =
+                                                              await checkLoginStatus(); // Check if the user is logged in
+
+                                                          if (isLoggedIn) {
+                                                            // If logged in, navigate to the ChooseBuildingType screen
+                                                            "عمائر";
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        const MeasurmentOfFieldScreen(),
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            // Show dialog if the user is not logged in
+                                                            showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return AlertDialog(
+                                                                    title: Text(
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      "تنبيه",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                    content:
+                                                                        Text(
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      loginMessage,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color: const Color
+                                                                              .fromARGB(
+                                                                              255,
+                                                                              109,
+                                                                              106,
+                                                                              106)),
+                                                                    ), // Display the login message
+                                                                    actions: [
+                                                                      Row(
+                                                                        children: [
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.of(context).pop(); // Close the dialog
+                                                                            },
+                                                                            child:
+                                                                                const Text(
+                                                                              "إلغاء",
+                                                                              style: TextStyle(fontSize: 12, color: Colors.black),
+                                                                            ),
+                                                                          ),
+                                                                          Spacer(),
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.of(context).pop(); // Close the dialog
+                                                                              // Navigate to the login screen
+                                                                              Navigator.pushReplacement(
+                                                                                context,
+                                                                                MaterialPageRoute(builder: (context) => SendOtp()), // Replace with your actual login screen
+                                                                              );
+                                                                            },
+                                                                            child:
+                                                                                const Text(
+                                                                              "تسجيل الدخول",
+                                                                              style: TextStyle(fontSize: 12, color: Colors.black),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                });
+                                                          }
+                                                        }),
+                                                  ),
+                                                ],
                                               ),
-                                              Container(
-                                                width: 60,
-                                                child: MainButton(
-                                                  text: "ڤلل",
-                                                  textColor: Colors.white,
-                                                  backGroundColor: primaryColor,
-                                                  onTap: () {
-                                                    orderModel.main_type =
-                                                        "ڤلل";
-                                                    // Close the first dialog before navigating
-                                                    Navigator.of(context).pop();
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const MeasurmentOfVilla(),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              Container(
-                                                width: 60,
-                                                child: MainButton(
-                                                  style:
-                                                      TextStyle(fontSize: 10),
-                                                  text: "عمائر",
-                                                  textColor: Colors.white,
-                                                  backGroundColor: primaryColor,
-                                                  onTap: () {
-                                                    orderModel.main_type =
-                                                        "عمائر";
-                                                    // Close the first dialog before navigating
-                                                    Navigator.of(context).pop();
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const MeasurmentOfFieldScreen(),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                            ),
+                                          );
+                                        },
                                       );
-                                    },
-                                  ),
-                                ),
+                                    }),
                               ),
                             ),
                           ),
                           InkWell(
-                            onTap: () => Navigator.of(context).push(
+                            onTap: () async {
+                              // If logged in, navigate to the DesignAndScreen
+                              Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const DesignAndScreen())),
+                                  builder: (context) => const DesignAndScreen(),
+                                ),
+                              );
+                            },
                             child: SizedBox(
-                              height: hight,
+                              height:
+                                  hight, // Ensure 'height' is correctly defined
                               child: Card(
                                 color: whiteBackGround,
                                 margin: const EdgeInsets.all(10),
@@ -654,7 +835,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: ListTile(
                                     title: Text(
                                       local.plansDesigns,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -669,6 +850,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
+
                           //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2
 
                           InkWell(
@@ -717,6 +899,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+bool? isLoggedIn;
+
+// Function to check login status
+Future<bool> checkLoginStatus() async {
+  isLoggedIn =
+      await Checktoken().hasToken(); // Ensure Checktoken is correctly defined
+  return isLoggedIn ?? false; // Return false if isLoggedIn is null
 }
 
 void launchEmail(String email) async {

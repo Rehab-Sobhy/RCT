@@ -20,23 +20,23 @@ class ParetenerCubit extends Cubit<PartenerStates> {
   List<PartenerModel> data = [];
 
   // Method to get the authentication token
-  Future<String?> _getAuthToken() async {
-    return AppPreferences.getData(key: 'loginToken');
-  }
+  // Future<String?> _getAuthToken() async {
+  //   return AppPreferences.getData(key: 'loginToken');
+  // }
 
   // Fetch partner data from the server
   Future<void> fetchData() async {
     emit(PartenerLoading());
-    final token = await _getAuthToken();
+    // final token = await _getAuthToken();
 
     try {
       final response = await _dio.get(
         "https://rctapp.com/api/clients",
         options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
+            // headers: {
+            //   'Authorization': 'Bearer $token',
+            // },
+            ),
       );
 
       if (response.statusCode == 200) {

@@ -173,7 +173,7 @@ class _BuildingStructScreenState extends State<BuildingStructScreen> {
                           // :
 
                           GestureDetector(
-                              onDoubleTap: () {
+                              onTap: () {
                                 orderModel.type_id = selectedId!;
 
                                 Navigator.of(context).push(MaterialPageRoute(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'package:rct/constants/constants.dart';
+import 'package:rct/view/home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   static String id = "OnboardingScreen";
@@ -22,7 +24,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      // backgroundColor: Colors.white,
       body: Stack(
         children: [
           PageView(
@@ -82,13 +83,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPressed: () {
                     // Next or Done button action
                     if (_currentPage == 3) {
+                      // Save onboarding completion status
+                      completeOnboarding();
                       // Navigate to the main app or home screen
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => HomeScreen()));
-                      // Navigator.pushReplacement(context,
-                      //     MaterialPageRoute(builder: (context) => SendOtp()));
                     } else {
                       _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
@@ -108,6 +109,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> completeOnboarding() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(
+        'hasCompletedOnboarding', true); // Save the completion status
   }
 
   Widget buildDot(int index, BuildContext context) {

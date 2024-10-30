@@ -13,9 +13,11 @@ import 'package:rct/view-model/cubits/order%20number/order_number_cubit.dart';
 import 'package:rct/view-model/cubits/sketches/sketches_cubit.dart';
 import 'package:rct/view-model/cubits/sketches/sketches_state.dart';
 import 'package:rct/view-model/functions/snackbar.dart';
+import 'package:rct/view/auth/sendotp.dart';
 import 'package:rct/view/designs%20and%20sketches/custom_designs_and_diagrams_screen.dart';
 import 'package:rct/view/designs%20and%20sketches/designs_screen.dart';
 import 'package:rct/view/designs%20and%20sketches/sketches_screen.dart';
+import 'package:rct/view/home_screen.dart';
 
 class DesignAndScreen extends StatefulWidget {
   const DesignAndScreen({super.key});
@@ -83,12 +85,84 @@ class _DesignAndScreenState extends State<DesignAndScreen> {
                     children: [
                       Expanded(
                         child: InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SketchesScreen(),
-                            ),
-                          ),
+                          onTap: () async {
+                            String loginMessage =
+                                "يرجى تسجيل الدخول ."; // Custom message
+                            bool isLoggedIn =
+                                await checkLoginStatus(); // Check if the user is logged in
+
+                            if (isLoggedIn) {
+                              // If logged in, navigate to the ChooseBuildingType screen
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SketchesScreen(),
+                                ),
+                              );
+                            } else {
+                              // Show dialog if the user is not logged in
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        textAlign: TextAlign.center,
+                                        "تنبيه",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text(
+                                        textAlign: TextAlign.center,
+                                        loginMessage,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: const Color.fromARGB(
+                                                255, 109, 106, 106)),
+                                      ), // Display the login message
+                                      actions: [
+                                        Row(
+                                          children: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close the dialog
+                                              },
+                                              child: const Text(
+                                                "إلغاء",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                            Spacer(),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close the dialog
+                                                // Navigate to the login screen
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SendOtp()), // Replace with your actual login screen
+                                                );
+                                              },
+                                              child: const Text(
+                                                "تسجيل الدخول",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               color: const Color(0xFF747171).withOpacity(0.3),
@@ -116,12 +190,83 @@ class _DesignAndScreenState extends State<DesignAndScreen> {
                       SizedBox(width: constHorizontalPadding),
                       Expanded(
                         child: InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DesignsScreen(),
-                            ),
-                          ),
+                          onTap: () async {
+                            String loginMessage =
+                                "يرجى تسجيل الدخول ."; // Custom message
+                            bool isLoggedIn =
+                                await checkLoginStatus(); // Check if the user is logged in
+
+                            if (isLoggedIn) {
+                              // If logged in, navigate to the ChooseBuildingType screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DesignsScreen(),
+                                ),
+                              );
+                            } else {
+                              // Show dialog if the user is not logged in
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        textAlign: TextAlign.center,
+                                        "تنبيه",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text(
+                                        textAlign: TextAlign.center,
+                                        loginMessage,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: const Color.fromARGB(
+                                                255, 109, 106, 106)),
+                                      ), // Display the login message
+                                      actions: [
+                                        Row(
+                                          children: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close the dialog
+                                              },
+                                              child: const Text(
+                                                "إلغاء",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                            Spacer(),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close the dialog
+                                                // Navigate to the login screen
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SendOtp()), // Replace with your actual login screen
+                                                );
+                                              },
+                                              child: const Text(
+                                                "تسجيل الدخول",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               color: const Color(0xFF0661E9).withOpacity(0.3),
@@ -150,12 +295,85 @@ class _DesignAndScreenState extends State<DesignAndScreen> {
                   ),
                   SizedBox(height: constVerticalPadding),
                   InkWell(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CustomDesignAndDiagramsScreen(),
-                      ),
-                    ),
+                    onTap: () async {
+                      String loginMessage =
+                          "يرجى تسجيل الدخول ."; // Custom message
+                      bool isLoggedIn =
+                          await checkLoginStatus(); // Check if the user is logged in
+
+                      if (isLoggedIn) {
+                        // If logged in, navigate to the ChooseBuildingType screen
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CustomDesignAndDiagramsScreen(),
+                          ),
+                        );
+                      } else {
+                        // Show dialog if the user is not logged in
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  textAlign: TextAlign.center,
+                                  "تنبيه",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                content: Text(
+                                  textAlign: TextAlign.center,
+                                  loginMessage,
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: const Color.fromARGB(
+                                          255, 109, 106, 106)),
+                                ), // Display the login message
+                                actions: [
+                                  Row(
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Close the dialog
+                                        },
+                                        child: const Text(
+                                          "إلغاء",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Close the dialog
+                                          // Navigate to the login screen
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SendOtp()), // Replace with your actual login screen
+                                          );
+                                        },
+                                        child: const Text(
+                                          "تسجيل الدخول",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFF2D8386).withOpacity(0.3),

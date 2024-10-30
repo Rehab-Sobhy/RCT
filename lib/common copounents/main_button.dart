@@ -24,9 +24,9 @@ class MainButton extends StatelessWidget {
       this.style,
       this.width = 335,
       this.backGroundColor,
-      this.height = 40,
+      this.height = 45,
       this.textColor = Colors.white,
-      this.fontSize = 10,
+      this.fontSize = 12,
       this.onTap});
 
   @override
@@ -52,7 +52,7 @@ class MainButton extends StatelessWidget {
               text: text!,
               style: TextStyle(
                 color: textColor,
-                fontSize: fontSize,
+                fontSize: fontSize, fontWeight: FontWeight.bold,
                 // fontWeight: mainFontWeight,
               ),
             ),

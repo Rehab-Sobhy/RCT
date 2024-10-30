@@ -47,10 +47,10 @@
 // }
 
 //google play  changes criteria
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 
 import 'package:rct/view/home_screen.dart';
 import 'package:rct/view/onboarding/onboarding_screen_1.dart';
@@ -64,12 +64,13 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // Replace the token check with a boolean variable
-  final bool hasCompletedOnboarding = true; // Set this based on your criteria
+  bool hasCompletedOnboarding = false; // Initialize as false
 
   @override
   void initState() {
     super.initState();
+    checkOnboardingStatus(); // Check the onboarding status
+
     Timer(const Duration(seconds: 1), () {
       if (kDebugMode) {
         print("Onboarding status: $hasCompletedOnboarding");
@@ -80,6 +81,13 @@ class _SplashScreenState extends State<SplashScreen> {
               context, MaterialPageRoute(builder: (context) => HomeScreen()))
           : Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => OnboardingScreen()));
+    });
+  }
+
+  Future<void> checkOnboardingStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      hasCompletedOnboarding = prefs.getBool('hasCompletedOnboarding') ?? false;
     });
   }
 

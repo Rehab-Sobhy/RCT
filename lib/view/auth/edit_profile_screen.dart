@@ -142,7 +142,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double higt = MediaQuery.of(context).size.height * .1;
+    double higt = MediaQuery.of(context).size.height * .05;
     var local = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -162,7 +162,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         title: Text(
           local.profile,
-          style: TextStyle(color: Colors.white, fontSize: 12),
+          style: TextStyle(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
         ),
       ),
       body: Stack(
@@ -195,8 +196,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Image.asset(
-                        "$iconsPath/logo_without_text-icon.png",
-                        height: 100.h,
+                        "assets/images/h512-removebg-preview.png",
+                        height: 150.h,
                       ),
                       SizedBox(height: 20.h),
                       Expanded(
