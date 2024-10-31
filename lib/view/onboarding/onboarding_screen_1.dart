@@ -40,12 +40,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 description: local.page1Description,
               ),
               OnboardingPage(
-                imagePath: 'assets/images/unsplash_V5OEpF12pzw (1).png',
+                imagePath: 'assets/images/unsplash_V5OEpF12pzw (3).png',
                 title: local.page2Title,
                 description: local.page2Description,
               ),
               OnboardingPage(
-                imagePath: 'assets/images/unsplash_V5OEpF12pzw (3).png',
+                imagePath: 'assets/images/unsplash_V5OEpF12pzw (1).png',
                 title: local.page3Title,
                 description: local.page3Description,
               ),

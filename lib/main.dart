@@ -40,6 +40,7 @@ import 'package:rct/view/RealEstate/model.dart';
 import 'package:rct/view/RealEstate/post_cubit.dart';
 import 'package:rct/view/RealEstate/real_estate_cubit.dart';
 import 'package:rct/view/final_orders/orders_screen.dart';
+import 'package:rct/view/onboarding/onboarding_screen_1.dart';
 import 'package:rct/view/partener_success/cubit.dart';
 import 'firebase_options.dart';
 
@@ -236,7 +237,7 @@ class MyApp extends StatelessWidget {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: provider.locale,
-        home: SplashScreen(),
+        home: OnboardingScreen(),
       ),
     );
   }
