@@ -67,7 +67,11 @@ class _PartenerDetailsScreenState extends State<PartenerDetailsScreen> {
                             "${linkServerName}/${product!.image}")),
                   if (product != null) Text(product.name!),
                   const SizedBox(height: 20),
-                  if (product!.description != null) Text(product.description!),
+                  if (product!.description != null)
+                    Text(
+                      product.description!,
+                      textAlign: TextAlign.center,
+                    ),
                 ],
               ),
             );

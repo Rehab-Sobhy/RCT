@@ -65,6 +65,9 @@ class _FinalOffersState extends State<FinalOffers> {
         builder: (context, state) {
           if (state is DataLoading) {
             return Container();
+          } else if (state is FilterSuccessState) {
+            // Display the filtered data when filtering is successful
+            data = cubit.filterList!;
           } else if (state is DataError) {
             return const Center(child: Text('No Data Added'));
           } else if (state is DataSuccess) {

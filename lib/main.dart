@@ -222,22 +222,28 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'RCT App',
         theme: ThemeData(
-          brightness: Brightness.light,
-          colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
-          checkboxTheme: CheckboxThemeData(
-            checkColor: WidgetStatePropertyAll(Colors.white),
-          ),
-          fontFamily: 'Font1',
-          primaryColor: primaryColor,
-          indicatorColor: primaryColor,
-          textTheme: TextTheme(),
-        ),
+            brightness: Brightness.light,
+            colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
+            checkboxTheme: CheckboxThemeData(
+              checkColor: WidgetStatePropertyAll(Colors.white),
+            ),
+            fontFamily: 'Font1',
+            primaryColor: primaryColor,
+            indicatorColor: primaryColor,
+            textTheme: TextTheme(),
+            tabBarTheme: TabBarTheme(
+                unselectedLabelStyle: TextStyle(
+                  fontFamily: 'Font1',
+                ),
+                labelStyle: TextStyle(
+                  fontFamily: 'Font1',
+                ))),
         debugShowCheckedModeBanner: false,
         initialRoute: SplashScreen.id,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: provider.locale,
-        home: OnboardingScreen(),
+        home: SplashScreen(),
       ),
     );
   }

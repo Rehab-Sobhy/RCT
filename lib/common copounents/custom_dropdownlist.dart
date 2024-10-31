@@ -32,7 +32,11 @@ class CustomDropDownList extends StatelessWidget {
           icon: const Icon(Icons.keyboard_arrow_down_outlined),
           isExpanded: true,
           hint: Text(hint),
-          style: TextStyle(fontSize: 12, color: Colors.black),
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.black,
+            fontFamily: 'Font1',
+          ),
           borderRadius: BorderRadius.circular(10),
           onChanged: onChanged,
           items: [

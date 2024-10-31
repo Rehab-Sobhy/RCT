@@ -116,20 +116,26 @@ class _MainFavouritesState extends State<MainFavourites> {
               Tab(text: 'التصاميم'),
               Tab(text: "المخططات"),
             ],
-            labelStyle:
-                const TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+            labelStyle: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Font1',
+            ),
             unselectedLabelColor: Colors.grey,
             labelColor: primaryColor,
             indicatorColor: primaryColor,
             indicatorSize: TabBarIndicatorSize
                 .tab, // Stretch the indicator to the full width of the tab
 
-            unselectedLabelStyle:
-                const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Font1',
+            ),
             indicatorPadding: const EdgeInsets.symmetric(
-                horizontal: 20), // Adds padding to the indicator
+                horizontal: 15), // Adds padding to the indicator
             isScrollable: false, // Makes tabs equally spaced
-            padding: const EdgeInsets.all(3),
+            padding: const EdgeInsets.all(1),
           ),
         ),
         body: const TabBarView(children: [

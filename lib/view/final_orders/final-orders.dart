@@ -55,14 +55,21 @@ class _FinalOrdersScreenState extends State<FinalOrdersScreen> {
               Tab(text: "العروض العقارية"),
               Tab(text: 'التصاميم والمخططات')
             ],
-            labelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+            labelStyle: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              fontFamily: 'Font1',
+            ),
             isScrollable: true,
             dragStartBehavior: DragStartBehavior.start,
             unselectedLabelColor: Colors.grey,
             labelColor: primaryColor,
             indicatorColor: primaryColor, tabAlignment: TabAlignment.start,
-            unselectedLabelStyle:
-                TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+            unselectedLabelStyle: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Font1',
+            ),
             // padding: EdgeInsets.all(3),
           ),
         ),

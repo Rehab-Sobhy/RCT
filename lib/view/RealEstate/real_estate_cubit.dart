@@ -61,38 +61,21 @@ class DataCubit extends Cubit<DataState> {
     }
   }
 
-  Future<void> FilteredData({
+  void filterData({
     required String city,
     required String district,
-  }) async {
-    emit(FilterLoadingsState());
-    city = city.trim();
-    district = district.trim();
+    required int maxPrice,
+  }) {
+    final filtered = allDataList.where((item) {
+      // Convert the `price` field to a double for comparison
+      final itemPrice = double.tryParse(item.price ?? "0") ?? 0;
 
-    filterList = allDataList.where((element) {
-      bool cityMatches = true;
-      bool districtMatches = true;
-
-      if (city.isNotEmpty) {
-        cityMatches = element.city_name != null &&
-            element.city_name!.toLowerCase().contains(city.toLowerCase());
-      }
-
-      if (district.isNotEmpty) {
-        districtMatches = element.district_name != null &&
-            element.district_name!
-                .toLowerCase()
-                .contains(district.toLowerCase());
-      }
-
-      return cityMatches && districtMatches;
+      return item.city_name == city &&
+          item.district_name == district &&
+          itemPrice <= maxPrice;
     }).toList();
 
-    if (filterList!.isEmpty) {
-      emit(DataError("No data matches the filter criteria."));
-    } else {
-      emit(FilterSuccessState(filterList!));
-    }
+    emit(FilterSuccessState(filtered));
   }
 
   void SearchHouse({required String input}) {
