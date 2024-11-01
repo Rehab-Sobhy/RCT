@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rct/common%20copounents/main_button.dart';
 import 'package:rct/constants/constants.dart';
-import 'package:rct/constants/linkapi.dart';
-import 'package:rct/view/RealEstate/final_offers.dart';
 import 'package:rct/view/RealEstate/real_estate_cubit.dart';
 import 'package:rct/view/RealEstate/states.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,59 +13,55 @@ class FilterScreen extends StatefulWidget {
   State<FilterScreen> createState() => _FilterScreenState();
 }
 
-final List<String> _cities = [
-  'الرياض',
-  'جده',
-  'المدينه المنوره',
-  'تبوك',
-  'الدمام',
-  'الاحساء',
-  'القطيف',
-  'خميس مشيط',
-  'المظيلف',
-  'الهفوف',
-  'المبرز',
-  'الطائف',
-  'نجران',
-  'حفر الباطن',
-  'الجبيل',
-  'ضباء',
-  'الخرج',
-  'الثقبة',
-  'ينبع البحر',
-  'الخبر',
-  'عرعر',
-  'الحوية',
-  'عنيزه',
-  'سكاكا',
-  'جيزان',
-  'القريات',
-  'الظهران',
-  'الباحة',
-  'الزلفي',
-  'الرس',
-  'وادى الدواسر',
-  'بيشه',
-  'سيهات',
-  'شروره',
-  'بحره',
-  'تاروت',
-  'الدوادمى',
-  'صبياء',
-  'بيش',
-  'احد رفيدة',
-  'الفريش',
-  'بارق',
-  'الحوطه',
-  'الافلاج'
-];
-
 class _FilterScreenState extends State<FilterScreen> {
   String? selectedCity;
-  String? selectedDistrict;
   TextEditingController distrectnameController = TextEditingController();
-
-  // Define the fixed values for the slider
+  final List<String> _cities = [
+    'الرياض',
+    'جده',
+    'المدينه المنوره',
+    'تبوك',
+    'الدمام',
+    'الاحساء',
+    'القطيف',
+    'خميس مشيط',
+    'المظيلف',
+    'الهفوف',
+    'المبرز',
+    'الطائف',
+    'نجران',
+    'حفر الباطن',
+    'الجبيل',
+    'ضباء',
+    'الخرج',
+    'الثقبة',
+    'ينبع البحر',
+    'الخبر',
+    'عرعر',
+    'الحوية',
+    'عنيزه',
+    'سكاكا',
+    'جيزان',
+    'القريات',
+    'الظهران',
+    'الباحة',
+    'الزلفي',
+    'الرس',
+    'وادى الدواسر',
+    'بيشه',
+    'سيهات',
+    'شروره',
+    'بحره',
+    'تاروت',
+    'الدوادمى',
+    'صبياء',
+    'بيش',
+    'احد رفيدة',
+    'الفريش',
+    'بارق',
+    'الحوطه',
+    'الافلاج'
+  ];
   final List<int> priceOptions = [
     500000,
     1000000,
@@ -80,7 +74,7 @@ class _FilterScreenState extends State<FilterScreen> {
     8000000,
     9000000
   ];
-  int selectedPriceIndex = 0; // Initial slider index
+  int selectedPriceIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +82,6 @@ class _FilterScreenState extends State<FilterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        scrolledUnderElevation: 0.0,
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
@@ -118,19 +111,19 @@ class _FilterScreenState extends State<FilterScreen> {
                       fontSize: 12, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                dropdownColor: Colors.white,
                 value: selectedCity,
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(10),
+                  contentPadding: const EdgeInsets.all(10),
                   border: const OutlineInputBorder(),
                   hintText: local.chooseCity,
-                  hintStyle: TextStyle(color: Colors.grey, fontSize: 12),
+                  hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
                 ),
                 items: _cities.map((String city) {
                   return DropdownMenuItem<String>(
                     value: city,
                     child: Text(city,
-                        style: TextStyle(fontSize: 12, color: Colors.black)),
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.black)),
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -147,14 +140,13 @@ class _FilterScreenState extends State<FilterScreen> {
               TextField(
                 controller: distrectnameController,
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(10),
+                  contentPadding: const EdgeInsets.all(10),
                   hintText: local.enterDistrict,
-                  hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
+                  hintStyle: const TextStyle(fontSize: 12, color: Colors.grey),
                   border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
-              // Slider with specific values
               Text(local.price),
               Slider(
                 value: selectedPriceIndex.toDouble(),
@@ -177,7 +169,20 @@ class _FilterScreenState extends State<FilterScreen> {
                     text: local.refilter,
                     backGroundColor: primaryColor,
                     onTap: () {
-                      Navigator.pop(context);
+                      if (selectedCity != null &&
+                          distrectnameController.text.isNotEmpty) {
+                        int selectedPrice = priceOptions[selectedPriceIndex];
+
+                        context.read<DataCubit>().filterData(
+                              city: selectedCity!,
+                              district: distrectnameController.text,
+                              // maxPrice: selectedPrice,
+                            );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("fill all fields")),
+                        );
+                      }
                     },
                   ),
                   MainButton(
@@ -185,12 +190,6 @@ class _FilterScreenState extends State<FilterScreen> {
                     text: local.cancel,
                     backGroundColor: grey,
                     onTap: () {
-                      // context.read<DataCubit>().filterData(
-                      //   city: selectedCity,
-                      //   district: distrectnameController.text,
-                      //   maxPrice: selectedPrice,
-                      // );
-
                       Navigator.pop(context);
                     },
                   ),
@@ -206,7 +205,7 @@ class _FilterScreenState extends State<FilterScreen> {
                     );
                   }
                 },
-                child: Container(), // Empty container to trigger listener
+                child: Container(),
               ),
             ],
           ),

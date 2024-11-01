@@ -64,16 +64,31 @@ class DataCubit extends Cubit<DataState> {
   void filterData({
     required String city,
     required String district,
-    required int maxPrice,
+    // required int maxPrice,
   }) {
-    final filtered = allDataList.where((item) {
-      // Convert the `price` field to a double for comparison
-      final itemPrice = double.tryParse(item.price ?? "0") ?? 0;
+    // Print the city and district being filtered
+    print('Filtering data for city: $city, district: $district');
 
-      return item.city_name == city &&
-          item.district_name == district &&
-          itemPrice <= maxPrice;
+    // Print the total number of items before filtering
+    print('Total items before filtering: ${allDataList.length}');
+
+    final filtered = allDataList.where((item) {
+      // Uncomment and adjust if you need to check for price as well
+      // final itemPrice = double.tryParse(item.price ?? "0") ?? 0;
+
+      // Print each item's city and district for debugging
+      print(
+          'Checking item: city=${item.city_name}, district=${item.district_name}');
+
+      return item.city_name == city && item.district_name == district;
+      //  && itemPrice <= maxPrice;
     }).toList();
+
+    // Print the total number of items after filtering
+    print('Total items after filtering: ${filtered.length}');
+
+    // Print the filtered results for further analysis
+    print('Filtered items: $filtered');
 
     emit(FilterSuccessState(filtered));
   }
