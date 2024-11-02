@@ -141,9 +141,9 @@ class _Floor3maaerDetailsState extends State<Floor3maaerDetails> {
                             text: "مساحة الدور الأول ",
                           ),
                           FloorDetails(
-                            number:
-                                orderModel.areaspace * secondPercentage * num -
-                                    2,
+                            number: orderModel.areaspace *
+                                secondPercentage *
+                                (num - 2),
                             text: "مساحة الأدوار المتكررة ",
                           ),
                           FloorDetails(
