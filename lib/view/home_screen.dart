@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -428,22 +430,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const Divider(),
                       ListTile(
-                        title: Text(
-                          "حذف الحساب",
-                          style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        leading: SvgPicture.asset("$iconsPath/Vector-4.svg"),
-                        // titleTextStyle: Theme.of(context).textTheme.titleMedium,
-                        onTap: () async {
-                          await secureStorage.deleteAll();
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => HomeScreen()));
-                          // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-                        },
-                      ),
+                          title: Text(
+                            "حذف الحساب",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          leading: SvgPicture.asset("$iconsPath/Vector-4.svg"),
+                          // titleTextStyle: Theme.of(context).textTheme.titleMedium,
+                          onTap: () async {
+                            await secureStorage.deleteAll();
+                            await deleteAccount(context);
+
+                            setState(() {
+                              loged = false;
+                            });
+                          }),
                     ],
                   )
                 : Container(),
@@ -731,12 +734,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       style: TextStyle(
                                                                           fontSize:
                                                                               12,
-                                                                          color: const Color
-                                                                              .fromARGB(
-                                                                              255,
-                                                                              109,
-                                                                              106,
-                                                                              106)),
+                                                                          color:
+                                                                              Colors.black),
                                                                     ), // Display the login message
                                                                     actions: [
                                                                       Row(
@@ -834,12 +833,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       style: TextStyle(
                                                                           fontSize:
                                                                               12,
-                                                                          color: const Color
-                                                                              .fromARGB(
-                                                                              255,
-                                                                              109,
-                                                                              106,
-                                                                              106)),
+                                                                          color:
+                                                                              Colors.black),
                                                                     ), // Display the login message
                                                                     actions: [
                                                                       Row(
@@ -962,8 +957,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
-
-                          //عملاء وشراكة***************************************
                         ],
                       ),
                     ),
@@ -985,6 +978,100 @@ Future<bool> checkLoginStatus() async {
   isLoggedIn =
       await Checktoken().hasToken(); // Ensure Checktoken is correctly defined
   return isLoggedIn ?? false; // Return false if isLoggedIn is null
+}
+
+Future<void> deleteAccount(BuildContext context) async {
+  final url = Uri.parse('https://rctapp.com/api/account/delete');
+
+  try {
+    // Show a confirmation dialog
+    bool confirmed = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            'تأكيد الحذف',
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
+          content: Text(
+            'هل أنت متأكد من أنك تريد حذف الحساب؟',
+            style: TextStyle(fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'إلغاء',
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+            TextButton(
+              onPressed: () =>
+                  Navigator.pop(context, true), // Return true on confirmation
+              child: Text(
+                'تأكيد',
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!confirmed) return; // Exit if user cancels
+
+    final token =
+        await _getAuthToken(); // Replace with your method to get the token
+
+    // Create a DELETE request with body data
+    var request = http.Request('DELETE', url);
+    request.headers.addAll({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    request.body = jsonEncode({
+      'key': 'value', // Replace with your actual data
+    });
+
+    // Send the request
+    var response = await request.send();
+    var responseBody = await response.stream.bytesToString();
+
+    // Handle the response
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'تم حذف الحساب بنجاح',
+            style: TextStyle(fontSize: 14),
+          ),
+        ),
+      );
+      // Navigate or perform further actions as needed
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+          'حدث خطأ أثناء حذف الحساب: ${response.reasonPhrase}',
+          style: TextStyle(fontSize: 14),
+        )),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text(
+        'خطأ: $e',
+        style: TextStyle(fontSize: 14),
+      )),
+    );
+  }
+}
+
+Future<String?> _getAuthToken() async {
+  return AppPreferences.getData(key: 'loginToken');
 }
 
 void launchEmail(String email) async {

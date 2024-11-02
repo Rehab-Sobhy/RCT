@@ -112,9 +112,7 @@ class _ChooseBuildingTypeState extends State<ChooseBuildingType> {
                                 textAlign: TextAlign.center,
                                 loginMessage,
                                 style: TextStyle(
-                                    fontSize: 12,
-                                    color: const Color.fromARGB(
-                                        255, 109, 106, 106)),
+                                    fontSize: 12, color: Colors.black),
                               ), // Display the login message
                               actions: [
                                 Row(
