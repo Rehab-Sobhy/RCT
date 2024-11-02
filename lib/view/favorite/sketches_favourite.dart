@@ -111,7 +111,9 @@ class _SketchesFavouriteState extends State<SketchesFavourite> {
                                                   Colors.red),
                                         ),
                                         onPressed: () {
-                                          cubit.toggleFavorite(sketch);
+                                          setState(() {
+                                            cubit.toggleFavorite(sketch);
+                                          });
                                         },
                                         child: Text(
                                           "ازله",

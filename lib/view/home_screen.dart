@@ -172,18 +172,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.all(2),
                             decoration: BoxDecoration(
                               color: Colors.red,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(6),
                             ),
                             constraints: const BoxConstraints(minWidth: 6),
-                            child: Text(
-                              "$number", // Ensure the number is a string
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize:
-                                    4, // Adjusted the font size for visibility
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                            // child: Text(
+                            //   "$number", // Ensure the number is a string
+                            //   style: const TextStyle(
+                            //     color: Colors.white,
+                            //     fontSize:
+                            //         4, // Adjusted the font size for visibility
+                            //   ),
+                            //   textAlign: TextAlign.center,
+                            // ),
                           ),
                         ),
                     ],
@@ -219,35 +219,56 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (state is UserLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(image),
-                      radius: 40,
-                    ),
-                    title: Text(
-                      name,
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 12,
+                  return loged
+                      ? ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(image),
+                            radius: 40,
                           ),
-                    ),
-                    subtitle: InkWell(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const EditProfileScreen()),
-                      ),
-                      child: Text(
-                        local.editFile,
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontSize: 13,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.blue,
-                        ),
-                      ),
-                    ),
-                  );
+                          title: Text(
+                            name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                ),
+                          ),
+                          subtitle: InkWell(
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const EditProfileScreen()),
+                            ),
+                            child: Text(
+                              local.editFile,
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontSize: 13,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.blue,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => SendOtp()),
+                              );
+                            },
+                            child: Text(
+                              local.login,
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        );
                 },
               ),
             ),
@@ -258,11 +279,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         title: Text(
                           local.orders,
                           style: TextStyle(
-                              color: Colors.blue,
+                              color: Colors.black,
                               fontSize: 12,
                               fontWeight: FontWeight.bold),
                         ),
-                        leading: SvgPicture.asset("$iconsPath/1.svg"),
+                        leading: SvgPicture.asset(
+                          "$iconsPath/1.svg",
+                          color: Colors.black,
+                        ),
                         // titleTextStyle: Theme.of(context).textTheme.titleMedium,
                         onTap: () {
                           print("inhome$loginToken");

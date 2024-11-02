@@ -116,7 +116,7 @@ class _Floor3maaerDetailsState extends State<Floor3maaerDetails> {
                   (floorCount - (floorCount - 1)) *
                   firstPercentage;
               double mid =
-                  orderModel.areaspace * (floorCount - 2) * secondPercentage;
+                  orderModel.areaspace * (floorCount - 2.0) * secondPercentage;
               double last = orderModel.areaspace *
                   (floorCount - (floorCount - 1)) *
                   lastPercentage;
@@ -142,7 +142,8 @@ class _Floor3maaerDetailsState extends State<Floor3maaerDetails> {
                           ),
                           FloorDetails(
                             number:
-                                orderModel.areaspace * secondPercentage * num,
+                                orderModel.areaspace * secondPercentage * num -
+                                    2,
                             text: "مساحة الأدوار المتكررة ",
                           ),
                           FloorDetails(

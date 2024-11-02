@@ -23,7 +23,7 @@ class _FinalOffersState extends State<FinalOffers> {
   bool allButtonActive = true;
   bool sakanyActive = true;
   bool tojaryActive = true;
-
+  bool check = false;
   @override
   void initState() {
     super.initState();
@@ -60,29 +60,33 @@ class _FinalOffersState extends State<FinalOffers> {
         listener: (context, state) {
           if (state is DataError) {
             print(state.message);
-          }
-          if (state is FilterSuccessState) {
-            data = cubit.filterList ?? [];
-            print('Updated data: $data');
+          } else if (state is FilterSuccessState) {
+            if (cubit.filterList != null && cubit.filterList!.isNotEmpty) {
+              data = cubit.filterList!;
+            } else {
+              data = []; // Reset to empty if no filtered results
+            }
           } else if (state is DataSuccess) {
-            data = cubit.allDataList;
+            data = cubit.allDataList; // Reset to all data on success
+          } else if (state is FilterCategorySuccessState) {
+            data = data = context.read<DataCubit>().filterbycategoryList ?? [];
           }
         },
         builder: (context, state) {
           if (state is DataLoading) {
             return Container();
           } else if (state is FilterSuccessState) {
-            if (cubit.filterList != null) {
-              data = cubit.filterList!;
-            } else {
-              data = [];
-            }
-          } else if (state is FilterSuccessState && cubit.filterList != null) {
-            data = cubit.filterList!;
+            data = context.read<DataCubit>().filterList ?? [];
           } else if (state is DataError) {
             return const Center(child: Text('No Data Added'));
+          } else if (state is DataSuccess || check == true) {
+            data = context.read<DataCubit>().allDataList;
+          } else if (state is FilterCategorySuccessState) {
+            data = data = context.read<DataCubit>().filterbycategoryList ?? [];
           } else if (state is DataSuccess) {
-            data = cubit.allDataList;
+            setState(() {
+              data = cubit.allDataList;
+            });
           }
 
           return Padding(
@@ -167,15 +171,22 @@ class _FinalOffersState extends State<FinalOffers> {
       children: [
         _buildFilterButton(local.all, allButtonActive, () {
           setState(() {
+            check = true;
+            print(
+                'All button clicked, data length: ${context.read<DataCubit>().allDataList.length}');
+
             allButtonActive = !allButtonActive;
             sakanyActive = true;
             tojaryActive = true;
-            data = context.read<DataCubit>().allDataList;
+            setState(() {
+              data = context.read<DataCubit>().allDataList;
+            });
           });
         }),
         _buildFilterButton(local.residential, sakanyActive, () {
           _handleCategoryFilter("سكني");
           setState(() {
+            check = false;
             sakanyActive = !sakanyActive;
             allButtonActive = true;
             tojaryActive = true;
@@ -184,6 +195,7 @@ class _FinalOffersState extends State<FinalOffers> {
         _buildFilterButton(local.commercial, tojaryActive, () {
           _handleCategoryFilter("تجاري");
           setState(() {
+            check = false;
             tojaryActive = !tojaryActive;
             allButtonActive = true;
             sakanyActive = true;

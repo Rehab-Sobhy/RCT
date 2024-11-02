@@ -64,7 +64,7 @@ class DataCubit extends Cubit<DataState> {
   void filterData({
     required String city,
     required String district,
-    // required int maxPrice,
+    required int maxPrice,
   }) {
     // Print the city and district being filtered
     print('Filtering data for city: $city, district: $district');
@@ -72,25 +72,26 @@ class DataCubit extends Cubit<DataState> {
     // Print the total number of items before filtering
     print('Total items before filtering: ${allDataList.length}');
 
-    final filtered = allDataList.where((item) {
+    filterList = allDataList.where((item) {
       // Uncomment and adjust if you need to check for price as well
-      // final itemPrice = double.tryParse(item.price ?? "0") ?? 0;
+      final itemPrice = double.tryParse(item.price ?? "0") ?? 0;
 
       // Print each item's city and district for debugging
       print(
           'Checking item: city=${item.city_name}, district=${item.district_name}');
 
-      return item.city_name == city && item.district_name == district;
-      //  && itemPrice <= maxPrice;
+      return item.city_name == city &&
+          item.district_name == district &&
+          itemPrice <= maxPrice;
     }).toList();
 
     // Print the total number of items after filtering
-    print('Total items after filtering: ${filtered.length}');
+    print('Total items after filtering: ${filterList!.length}');
 
     // Print the filtered results for further analysis
-    print('Filtered items: $filtered');
+    print('Filtered items: $filterList');
 
-    emit(FilterSuccessState(filtered));
+    emit(FilterSuccessState(filterList!));
   }
 
   void SearchHouse({required String input}) {
@@ -120,7 +121,7 @@ class DataCubit extends Cubit<DataState> {
       if (filterbycategoryList!.isEmpty) {
         emit(DataError("No houses available in this category."));
       } else {
-        emit(FilterSuccessState(filterbycategoryList!));
+        emit(FilterCategorySuccessState(filterbycategoryList!));
       }
     } catch (error) {
       emit(DataError(error.toString()));
@@ -150,14 +151,23 @@ class DataCubit extends Cubit<DataState> {
     }
   }
 
-  Future<void> toggleFavorite(Modelget house) async {
-    if (favoriteList.any((favoriteHouse) => favoriteHouse.id == house.id)) {
-      favoriteList.removeWhere((favoriteHouse) => favoriteHouse.id == house.id);
+  // Future<void> toggleFavorite(Modelget house) async {
+  //   if (favoriteList.any((favoriteHouse) => favoriteHouse.id == house.id)) {
+  //     favoriteList.removeWhere((favoriteHouse) => favoriteHouse.id == house.id);
+  //   } else {
+  //     favoriteList.add(house);
+  //   }
+
+  //   await _saveFavoritesToSharedPreferences();
+  // }
+  void toggleFavorite(Modelget house) {
+    if (favoriteList.contains(house)) {
+      favoriteList.remove(house);
     } else {
       favoriteList.add(house);
     }
-
-    await _saveFavoritesToSharedPreferences();
+    emit(FavouriteSuccess(
+        favoriteList)); // Ensure a state is emitted for the UI to react
   }
 
   Future<void> _loadAllDataFromSharedPreferences() async {

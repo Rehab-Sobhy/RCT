@@ -8,6 +8,7 @@ import 'package:rct/view-model/functions/snackbar.dart';
 import 'package:rct/view/auth/register_screen.dart';
 import 'package:rct/view/auth/login.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rct/view/home_screen.dart';
 
 class SendOtp extends StatefulWidget {
   @override
@@ -91,7 +92,28 @@ class _SendOtpState extends State<SendOtp> {
     var local = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: BackButtonAppBar(context),
+      appBar: AppBar(
+        elevation: 0.0, scrolledUnderElevation: 0.0,
+        centerTitle: true,
+        title: Image.asset(
+          "assets/images/photo_2024-09-16_00-14-11.jpg",
+          fit: BoxFit.contain,
+          width: 100,
+          height: 100,
+        ),
+        // backgroundColor: primaryColor,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          },
+          icon: Icon(
+            Icons.arrow_back_ios_new_sharp,
+            color: Colors.black,
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

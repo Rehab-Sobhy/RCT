@@ -19,8 +19,6 @@ class _RealFavoritesState extends State<RealFavorites> {
     super.initState();
     final cubit = DataCubit.get(context);
 
-    // cubit.loadFavorites();
-
     // Load favorites when screen is initialized
   }
 
@@ -106,7 +104,9 @@ class _RealFavoritesState extends State<RealFavorites> {
                                                 Colors.red),
                                       ),
                                       onPressed: () {
-                                        cubit.toggleFavorite(house);
+                                        setState(() {
+                                          cubit.toggleFavorite(house);
+                                        });
                                       },
                                       child: Text(
                                         "ازله",
