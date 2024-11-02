@@ -77,11 +77,31 @@ class _MeasurmentOfVillaState extends State<MeasurmentOfVilla> {
                   TextFormFieldCustom(
                     context: context,
                     labelText: local.pleaseEnterTotalArea,
-                    onChanged: (value) {},
                     controller: controller,
                     border: true,
                     number: true,
+                    onChanged: (value) {
+                      // Replace Arabic numbers with English numbers
+                      String convertedValue = value
+                          .replaceAll('٠', '0')
+                          .replaceAll('١', '1')
+                          .replaceAll('٢', '2')
+                          .replaceAll('٣', '3')
+                          .replaceAll('٤', '4')
+                          .replaceAll('٥', '5')
+                          .replaceAll('٦', '6')
+                          .replaceAll('٧', '7')
+                          .replaceAll('٨', '8')
+                          .replaceAll('٩', '9');
+
+                      // Update the text field controller with the converted value if necessary
+                      controller.text = convertedValue;
+                      controller.selection = TextSelection.fromPosition(
+                        TextPosition(offset: controller.text.length),
+                      );
+                    },
                   ),
+
                   SizedBox(height: constVerticalPadding),
 
                   CustomDropDownList(

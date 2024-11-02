@@ -151,15 +151,6 @@ class DataCubit extends Cubit<DataState> {
     }
   }
 
-  // Future<void> toggleFavorite(Modelget house) async {
-  //   if (favoriteList.any((favoriteHouse) => favoriteHouse.id == house.id)) {
-  //     favoriteList.removeWhere((favoriteHouse) => favoriteHouse.id == house.id);
-  //   } else {
-  //     favoriteList.add(house);
-  //   }
-
-  //   await _saveFavoritesToSharedPreferences();
-  // }
   void toggleFavorite(Modelget house) {
     if (favoriteList.contains(house)) {
       favoriteList.remove(house);

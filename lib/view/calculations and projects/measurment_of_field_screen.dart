@@ -87,11 +87,31 @@ class _MeasurmentOfFieldScreenState extends State<MeasurmentOfFieldScreen> {
                   TextFormFieldCustom(
                     context: context,
                     labelText: local.pleaseEnterTotalArea,
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      // Replace Arabic numbers with English numbers
+                      String convertedValue = value
+                          .replaceAll('٠', '0')
+                          .replaceAll('١', '1')
+                          .replaceAll('٢', '2')
+                          .replaceAll('٣', '3')
+                          .replaceAll('٤', '4')
+                          .replaceAll('٥', '5')
+                          .replaceAll('٦', '6')
+                          .replaceAll('٧', '7')
+                          .replaceAll('٨', '8')
+                          .replaceAll('٩', '9');
+
+                      // Update the text field controller with the converted value if necessary
+                      controller.text = convertedValue;
+                      controller.selection = TextSelection.fromPosition(
+                        TextPosition(offset: controller.text.length),
+                      );
+                    },
                     controller: controller,
                     border: true,
                     number: true,
                   ),
+
                   SizedBox(height: constVerticalPadding),
 
                   CustomDropDownList(
@@ -135,7 +155,27 @@ class _MeasurmentOfFieldScreenState extends State<MeasurmentOfFieldScreen> {
                         context: context,
                         labelText: local.enterNumberOfFloors,
                         controller: floorsController,
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          // Replace Arabic numbers with English numbers
+                          String convertedValue = value
+                              .replaceAll('٠', '0')
+                              .replaceAll('١', '1')
+                              .replaceAll('٢', '2')
+                              .replaceAll('٣', '3')
+                              .replaceAll('٤', '4')
+                              .replaceAll('٥', '5')
+                              .replaceAll('٦', '6')
+                              .replaceAll('٧', '7')
+                              .replaceAll('٨', '8')
+                              .replaceAll('٩', '9');
+
+                          // Update the text field controller with the converted value if necessary
+                          floorsController.text = convertedValue;
+                          floorsController.selection =
+                              TextSelection.fromPosition(
+                            TextPosition(offset: floorsController.text.length),
+                          );
+                        },
                       ),
                       SizedBox(height: constVerticalPadding),
                       // Checkbox and Text
