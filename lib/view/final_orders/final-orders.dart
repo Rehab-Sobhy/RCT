@@ -1,11 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rct/constants/constants.dart';
 import 'package:rct/view/final_orders/designs_orders.dart';
 import 'package:rct/view/final_orders/raw_orders.dart';
 import 'package:rct/view/final_orders/realstate_orders.dart';
-import 'package:rct/view/home_screen.dart';
+
 import 'package:rct/view/final_orders/orders_screen.dart';
 
 class FinalOrdersScreen extends StatefulWidget {
@@ -23,22 +22,21 @@ class _FinalOrdersScreenState extends State<FinalOrdersScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          elevation: 0,
+          elevation: 0.0, scrolledUnderElevation: 0.0,
           centerTitle: true,
           title: Image.asset(
-            "assets/images/header.jpg",
+            "assets/images/photo_2024-09-16_00-14-11.jpg",
             fit: BoxFit.contain,
-            height: 50.h,
-            width: 170.w,
+            width: 100,
+            height: 100,
           ),
+          // backgroundColor: primaryColor,
           backgroundColor: Colors.white,
           leading: IconButton(
             onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
-                  (route) => false);
+              Navigator.pop(context);
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new_sharp,
               color: Colors.black,
             ),

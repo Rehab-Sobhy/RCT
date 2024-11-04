@@ -90,22 +90,21 @@ class _MainFavouritesState extends State<MainFavourites> {
       length: 3, // Number of tabs
       child: Scaffold(
         appBar: AppBar(
-          elevation: 0,
+          elevation: 0.0, scrolledUnderElevation: 0.0,
           centerTitle: true,
           title: Image.asset(
             "assets/images/photo_2024-09-16_00-14-11.jpg",
             fit: BoxFit.contain,
-            height: 50.h,
-            width: 170.w,
+            width: 100,
+            height: 100,
           ),
+          // backgroundColor: primaryColor,
           backgroundColor: Colors.white,
           leading: IconButton(
             onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
-                  (route) => false);
+              Navigator.pop(context);
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new_sharp,
               color: Colors.black,
             ),

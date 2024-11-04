@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:rct/common%20copounents/app_bar_back_button.dart';
 import 'package:rct/constants/constants.dart';
 import 'package:rct/constants/linkapi.dart';
@@ -24,6 +25,7 @@ class _FinalOffersState extends State<FinalOffers> {
   bool sakanyActive = true;
   bool tojaryActive = true;
   bool check = false;
+
   @override
   void initState() {
     super.initState();
@@ -69,24 +71,14 @@ class _FinalOffersState extends State<FinalOffers> {
           } else if (state is DataSuccess) {
             data = cubit.allDataList; // Reset to all data on success
           } else if (state is FilterCategorySuccessState) {
-            data = data = context.read<DataCubit>().filterbycategoryList ?? [];
+            data = context.read<DataCubit>().filterbycategoryList ?? [];
+          } else if (state is SearchSuccess) {
+            data = context.read<DataCubit>().filterbycategoryList ?? [];
           }
         },
         builder: (context, state) {
           if (state is DataLoading) {
-            return Container();
-          } else if (state is FilterSuccessState) {
-            data = context.read<DataCubit>().filterList ?? [];
-          } else if (state is DataError) {
-            return const Center(child: Text('No Data Added'));
-          } else if (state is DataSuccess || check == true) {
-            data = context.read<DataCubit>().allDataList;
-          } else if (state is FilterCategorySuccessState) {
-            data = data = context.read<DataCubit>().filterbycategoryList ?? [];
-          } else if (state is DataSuccess) {
-            setState(() {
-              data = cubit.allDataList;
-            });
+            return const Center();
           }
 
           return Padding(
@@ -152,10 +144,7 @@ class _FinalOffersState extends State<FinalOffers> {
                 const SizedBox(height: 20),
                 // Property Listings
                 Expanded(
-                  child: data.isEmpty
-                      ? const Center(
-                          child: Text('لم يتم إضافة عروض عقارية حتى الآن'))
-                      : _buildPropertyGrid(),
+                  child: _buildPropertyGrid(),
                 ),
               ],
             ),
@@ -172,15 +161,10 @@ class _FinalOffersState extends State<FinalOffers> {
         _buildFilterButton(local.all, allButtonActive, () {
           setState(() {
             check = true;
-            print(
-                'All button clicked, data length: ${context.read<DataCubit>().allDataList.length}');
-
             allButtonActive = !allButtonActive;
             sakanyActive = true;
             tojaryActive = true;
-            setState(() {
-              data = context.read<DataCubit>().allDataList;
-            });
+            data = context.read<DataCubit>().allDataList;
           });
         }),
         _buildFilterButton(local.residential, sakanyActive, () {
@@ -225,6 +209,12 @@ class _FinalOffersState extends State<FinalOffers> {
   }
 
   Widget _buildPropertyGrid() {
+    if (data.isEmpty) {
+      return const Center(
+        child: Text('لم يتم إضافة عروض عقارية حتى الآن'),
+      );
+    }
+
     return GridView.builder(
       itemCount: data.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -308,19 +298,16 @@ class _FinalOffersState extends State<FinalOffers> {
               ),
               const SizedBox(height: 4),
               Text(
-                "${house.city_name} - ${house.district_name}",
-                style:
-                    const TextStyle(fontSize: 9, fontWeight: FontWeight.w500),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                " ${house.city_name} - ${house.district_name}" ??
+                    'No city name',
+                style: const TextStyle(fontSize: 10),
               ),
               const SizedBox(height: 4),
               Text(
-                house.description ?? '',
-                style: const TextStyle(fontSize: 8),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
+                "${house.description} ${AppLocalizations.of(context)!.date}",
+                style: const TextStyle(fontSize: 10),
               ),
+              const SizedBox(height: 6),
             ],
           ),
         ),

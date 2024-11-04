@@ -80,8 +80,8 @@ class DataCubit extends Cubit<DataState> {
       print(
           'Checking item: city=${item.city_name}, district=${item.district_name}');
 
-      return item.city_name == city &&
-          item.district_name == district &&
+      return item.city_name == city ||
+          item.district_name == district ||
           itemPrice <= maxPrice;
     }).toList();
 
