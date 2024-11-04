@@ -261,7 +261,7 @@ class _Raw_ScreenState extends State<Raw_Screen> {
                       // Text field for "رقم الهوية"
                       TextFormFieldCustom(
                         numberofdigits: 10,
-                        inputType: TextInputType.number,
+
                         context: context,
                         labelText: "", // Optional field
                         controller: nationalIdControlller,

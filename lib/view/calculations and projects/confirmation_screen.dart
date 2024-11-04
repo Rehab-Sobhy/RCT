@@ -161,7 +161,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                     // Text field for "رقم الهوية"
                     TextFormFieldCustom(
                       numberofdigits: 10,
-                      inputType: TextInputType.number,
+
                       context: context,
                       labelText: "", // Optional field
                       controller: nationalIdControlller,

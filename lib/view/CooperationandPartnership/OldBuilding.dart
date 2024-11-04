@@ -257,7 +257,7 @@ class _Oldbuilding_ScreenState extends State<Oldbuilding_Screen> {
                       // Text field for "رقم الهوية"
                       TextFormFieldCustom(
                         numberofdigits: 10,
-                        inputType: TextInputType.number,
+
                         context: context,
                         labelText: "", // Optional field
                         controller: nationalIdControlller,
