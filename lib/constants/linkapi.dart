@@ -1,5 +1,5 @@
 const String googleMapsAPIKey = "AIzaSyDYinSZ14Vg2u4XtOTvCN5i4HhIMBjIkIs";
-
+const String giosMapsAPIKey = "AIzaSyBAEgd6sTshM5t8VCb79d7YTINYSAm_kG8";
 const String linkServerName = "https://rctapp.com";
 //auth
 const String linkLogin = "https://rctapp.com/api/login";
