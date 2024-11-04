@@ -93,7 +93,7 @@ class _MainFavouritesState extends State<MainFavourites> {
           elevation: 0,
           centerTitle: true,
           title: Image.asset(
-            "assets/images/header.jpg",
+            "assets/images/photo_2024-09-16_00-14-11.jpg",
             fit: BoxFit.contain,
             height: 50.h,
             width: 170.w,

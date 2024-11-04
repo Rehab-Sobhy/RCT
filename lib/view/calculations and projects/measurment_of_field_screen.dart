@@ -143,14 +143,6 @@ class _MeasurmentOfFieldScreenState extends State<MeasurmentOfFieldScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Text(
-                      //   local.numberOfFloors,
-                      //   style: Theme.of(context)
-                      //       .textTheme
-                      //       .bodySmall!
-                      //       .copyWith(fontSize: 12),
-                      // ),
-
                       TextFormFieldCustom(
                         context: context,
                         labelText: local.enterNumberOfFloors,
@@ -255,9 +247,7 @@ class _MeasurmentOfFieldScreenState extends State<MeasurmentOfFieldScreen> {
 
                             // Input validation and navigation logic
                             if (complexModel.floorCount != 0 &&
-                                orderModel.areaspace != null &&
-                                orderModel.finalForm != null &&
-                                orderModel.streetDetails != null) {
+                                orderModel.areaspace != null) {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => Floor3maaerDetails(),
                               ));

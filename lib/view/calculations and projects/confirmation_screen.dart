@@ -31,6 +31,7 @@ class ConfirmationScreen extends StatefulWidget {
 class _ConfirmationScreenState extends State<ConfirmationScreen> {
   TextEditingController controller = TextEditingController();
   bool isLoading = false;
+  bool isLocked3 = false;
   dynamic nationalIdImage;
   TextEditingController birtController = TextEditingController();
   TextEditingController nationalIdControlller = TextEditingController();
@@ -419,34 +420,75 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                               style: TextStyle(fontSize: 12, color: blackColor),
                             ),
                             SizedBox(height: constVerticalPadding),
-                            InkWell(
-                              onTap: () =>
-                                  pickImageFromGallery(context).then((value) {
-                                if (value != null) {
-                                  setState(() {
-                                    landCheckImage = value;
-                                    orderModel.landCheckImage = value;
-                                  });
-                                } else if (value == "" || value == null) {
-                                  setState(() {
-                                    landCheckImage = "no image";
-                                    orderModel.landCheckImage = "no image";
-                                  });
-                                }
-                              }),
-                              child: landCheckImage == null
-                                  ? Image.asset("$imagePath/upload-photo.png")
-                                  : InkWell(
-                                      onTap: () =>
-                                          showImage(context, landCheckImage),
-                                      child: Image.file(
-                                        landCheckImage,
-                                        height: 50,
-                                        width: 50,
-                                        fit: BoxFit.fill,
+                            isLocked3
+                                ? Row(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          // Show the image in a dialog when clicked
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return Dialog(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Image.file(
+                                                      landCheckImage!,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: Text('Close'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Image.file(
+                                          landCheckImage!,
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.fill,
+                                        ),
                                       ),
-                                    ),
-                            ),
+                                      Spacer(),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.close,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          // Unlock the image and show the text field again
+                                          setState(() {
+                                            isLocked3 = false;
+                                            landCheckImage = null;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                : InkWell(
+                                    onTap: () => pickImageFromGallery(context)
+                                        .then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          landCheckImage = value;
+                                          orderModel.landCheckImage = value;
+                                          isLocked3 =
+                                              true; // Lock the image when selected
+                                        });
+                                      }
+                                    }),
+                                    child: Image.asset(
+                                        "$imagePath/upload-photo.png"),
+                                  ),
                           ],
                         )
                       : Container(),

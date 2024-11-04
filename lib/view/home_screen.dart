@@ -203,26 +203,28 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Padding(
               padding: EdgeInsets.only(left: 10.w, top: 50.h, bottom: 20.h),
-              child: BlocConsumer<FinalOrdersCubit, FinalOrdersStates>(
-                listener: (context, state) {
-                  if (state is UserSucess) {
-                    setState(() {
-                      name = state.users.first.name!;
-                      image = "$linkServerName/${state.users.first.image}";
-                    });
-                  } else if (state is UserFaild) {
-                    setState(() {
-                      name = 'Default Name';
-                      image = 'https://example.com/default-image.png';
-                    });
-                  }
-                },
-                builder: (context, state) {
-                  if (state is UserLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return loged
-                      ? ListTile(
+              child: loged
+                  ? BlocConsumer<FinalOrdersCubit, FinalOrdersStates>(
+                      listener: (context, state) {
+                        if (state is UserSucess) {
+                          setState(() {
+                            name = state.users.first.name!;
+                            image =
+                                "$linkServerName/${state.users.first.image}";
+                          });
+                        } else if (state is UserFaild) {
+                          setState(() {
+                            name = 'Default Name';
+                            image = 'https://example.com/default-image.png';
+                          });
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is UserLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        return ListTile(
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(image),
                             radius: 40,
@@ -254,25 +256,24 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => SendOtp()),
-                              );
-                            },
-                            child: Text(
-                              local.login,
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                          ),
                         );
-                },
-              ),
+                      },
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => SendOtp()),
+                          );
+                        },
+                        child: Text(
+                          local.login,
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
             ),
             loged == true
                 ? Column(

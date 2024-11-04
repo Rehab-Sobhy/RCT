@@ -55,7 +55,7 @@ class NotifiContainer extends StatelessWidget {
               TextButton(
                 onPressed: () => type == "payment"
                     ? Navigator.pushNamed(
-                        context, const PaymentReciptScreen().screenId)
+                        context, PaymentReciptScreen().screenId)
                     : showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -72,9 +72,9 @@ class NotifiContainer extends StatelessWidget {
                               title: Text(local.replySentSuccessfully),
                               subtitle: Text(local.paymentNotification),
                             ),
-                            ontap: () => Navigator.of(context)
-                                .pushNamedAndRemoveUntil(
-                                    HomeScreen.id, (route) => false),
+                            ontap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen())),
                           );
                         }),
                 style: const ButtonStyle(
