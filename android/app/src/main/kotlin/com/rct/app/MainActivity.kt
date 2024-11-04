@@ -1,4 +1,4 @@
-package com.rctApp2024.rct
+package com.rct.app
 
 import io.flutter.embedding.android.FlutterActivity
 
